@@ -199,14 +199,13 @@ class RegisterForm extends PureComponent {
                             >
                                 <label className="mb-0">Date of birth</label>
                                 <DatePicker
-                                    value={values.DOB}
                                     format="DD/MM/YYYY"
                                     size="large"
                                     className="d-block"
                                     name="DOB"
-                                    onChange={value =>
-                                        setFieldValue('DOB', value)
-                                    }
+                                    onChange={(date, dateString) =>
+                                    setFieldValue('DOB', dateString)
+                                }
                                 />
                             </FormItem>
                         </div>

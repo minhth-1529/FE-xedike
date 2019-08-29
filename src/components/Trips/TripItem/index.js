@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Icon } from 'antd';
+import { Icon, Alert } from 'antd';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { fetchTripsRequest } from 'services/Trip/actions';
@@ -15,7 +15,7 @@ class TripItem extends PureComponent {
 
         return (
             <>
-                {_.map(trips, (item, index) => {
+                { _.map(trips, (item, index) => {
                     return (
                         <div
                             className={index !== 0 ? 'd-flex mt-3' : 'd-flex'}
@@ -73,7 +73,7 @@ class TripItem extends PureComponent {
                             </div>
                         </div>
                     );
-                })}
+                }) }
             </>
         );
     }

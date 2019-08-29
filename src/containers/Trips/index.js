@@ -11,9 +11,9 @@ class Trips extends Component {
                 <div className="row">
                     <div className="col-3">
                         <Wrapper>
-                            <h5 className="font-weight-normal d-flex align-items-center mb-2">
+                            <h5 className="font-weight-normal d-flex align-items-center mb-4">
                                 <Icon type="filter" className="mr-1" />
-                                Filter
+                                Search
                             </h5>
                             <BookingForm />
                         </Wrapper>

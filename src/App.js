@@ -17,8 +17,8 @@ function App() {
             <div className="container">
                 <BrowserRouter>
                     <Switch>
-                        <Route path="/profile" component={MyProfile} />
-                        <Route path="/trips" component={Trips} />
+                        <Route path="/profile" exact component={MyProfile} />
+                        <Route path="/trips/search" component={Trips} />
                         {/* <Route path="/tasks" exact component={TaskList} />
                         <Route path="/add-task" exact component={TaskForm} />
                         <Route
