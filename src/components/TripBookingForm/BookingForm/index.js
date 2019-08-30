@@ -9,7 +9,7 @@ import apiCaller from 'utils/apiCaller';
 import { toast, ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux';
 import { searchTrips } from 'services/Trip/actions.js';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom'
 import moment from 'moment';
 
 const FormItem = Form.Item;
@@ -31,7 +31,7 @@ class BookingForm extends Component {
         setTimeout(() => {
             setFieldValue('locationFrom', stringObject.from);
             setFieldValue('locationTo', stringObject.to);
-            setFieldValue('startTime', stringObject.startTime);
+            setFieldValue('startTime', moment(stringObject.startTime));
             setFieldValue('slot', stringObject.slot);
         }, 1);
 
@@ -72,7 +72,11 @@ class BookingForm extends Component {
                                 errors.locationFrom &&
                                 'error'
                             }
-                            help={touched.locationFrom && errors.locationFrom}
+                            help={
+                                !atHome &&
+                                touched.locationFrom &&
+                                errors.locationFrom
+                            }
                         >
                             <Select
                                 name="locationFrom"
@@ -110,7 +114,11 @@ class BookingForm extends Component {
                                 errors.locationTo &&
                                 'error'
                             }
-                            help={touched.locationTo && errors.locationTo}
+                            help={
+                                !atHome &&
+                                touched.locationTo &&
+                                errors.locationTo
+                            }
                         >
                             <Select
                                 name="locationTo"
@@ -146,16 +154,16 @@ class BookingForm extends Component {
                             validateStatus={
                                 touched.startTime && errors.startTime && 'error'
                             }
-                            help={touched.startTime && errors.startTime}
+                            help={
+                                !atHome && touched.startTime && errors.startTime
+                            }
                         >
                             <DatePickerCustom
                                 size="large"
                                 format="DD/MM/YYYY"
                                 name="startTime"
-                                value={moment(values.startTime)}
-                                onChange={v =>
-                                    setFieldValue('startTime', v)
-                                }
+                                value={values.startTime}
+                                onChange={v => setFieldValue('startTime', v)}
                             />
                         </FormItem>
                     </Col>
@@ -179,7 +187,7 @@ class BookingForm extends Component {
                                 max={10}
                                 defaultValue={2}
                                 size="large"
-                                value={values.slot}
+                                // value={values.slot}
                                 name="slot"
                                 onChange={value => setFieldValue('slot', value)}
                             />
@@ -232,34 +240,34 @@ const withFormikHOC = withFormik({
             slot: 2
         };
     },
-    // validationSchema: Yup.object().shape({
-    //     locationFrom: Yup.string().required('This field is required'),
-    //     locationTo: Yup.string().required('This field is required'),
-    //     startTime: Yup.string().required('This field is required')
-    // }),
+    validationSchema: Yup.object().shape({
+        locationFrom: Yup.string().required('This field is required'),
+        locationTo: Yup.string().required('This field is required')
+    }),
     handleSubmit: (values, { props }) => {
         const string = queryString.stringify({
             from: values.locationFrom,
             to: values.locationTo,
             startTime: values.startTime,
-            slot: values.slot
+            slot: values.slot || 2
         });
 
-        apiCaller(`api/trips/search?${string}`, 'POST', null)
-            .then(res => {
-                props.searchTrips(res.data);
-                props.history.push(`/trips/search?${string}`);
-            })
-            .catch(err => {
-                toast.error(err.response.data.message);
-                props.searchTrips([]);
-            });
+        props.history.push(`/trips/search?${string}`);
+
+        if (!props.atHome) {
+            apiCaller(`api/trips/search?${string}`, 'POST', null)
+                .then(res => {
+                    props.searchTrips(res.data);
+                })
+                .catch(err => {
+                    toast.error(err.response.data.message);
+                    props.searchTrips([]);
+                });
+        }
     }
 });
 
-export default withRouter(
-    connect(
-        null,
-        mapDispatchToProps
-    )(withFormikHOC(BookingForm))
-);
+export default withRouter(connect(
+    null,
+    mapDispatchToProps
+)(withFormikHOC(BookingForm)));

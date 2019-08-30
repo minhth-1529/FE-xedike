@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import Logo from 'assets/images/logo.png';
-import { Navbar, NavbarBrand, Nav, NavItem, Collapse } from 'reactstrap';
+import { Navbar, Nav, NavItem, Collapse } from 'reactstrap';
 import { HeaderContainer } from './styled';
 import { FaUserPlus } from 'react-icons/fa';
 import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm'
+import RegisterForm from './RegisterForm';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Avatar, Menu, Dropdown } from 'antd';
+import _ from 'lodash';
 class Header extends Component {
     constructor(props) {
         super(props);
@@ -30,13 +34,46 @@ class Header extends Component {
 
     render() {
         const { signInVisible, registerVisible } = this.state;
+        const {authen} = this.props;
+
+        const menu = (
+            <Menu>
+                <Menu.Item>
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="http://www.alipay.com/"
+                    >
+                        1st menu item
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="http://www.taobao.com/"
+                    >
+                        2nd menu item
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="http://www.tmall.com/"
+                    >
+                        3rd menu item
+                    </a>
+                </Menu.Item>
+            </Menu>
+        );
 
         return (
             <HeaderContainer>
                 <Navbar expand="md">
-                    <NavbarBrand href="/" className="px-0 py-0 mr-0">
+                    <Link to="/" className="px-0 py-0 mr-0">
                         <img className="logo" src={Logo} alt="logo" />
-                    </NavbarBrand>
+                    </Link>
                     <Collapse navbar>
                         <Nav className="ml-auto align-items-center" navbar>
                             <NavItem className="mr-3">
@@ -44,29 +81,48 @@ class Header extends Component {
                                     Trip
                                 </a>
                             </NavItem>
-                            <NavItem className="mr-3">
-                                <p
-                                    className="login-link text-white cursor-point mb-0"
-                                    onClick={() => this.loginModal(true)}
-                                >
-                                    Login
-                                </p>
-                                <LoginForm
-                                    registerModal={this.registerModal}
-                                    loginModal={this.loginModal}
-                                    signInVisible={signInVisible}
-                                />
-                            </NavItem>
-                            <NavItem>
-                                <button
-                                    type="button"
-                                    className="btn btn-primary btn-sm"
-                                    onClick={() => this.registerModal(true)}
-                                >
-                                    <FaUserPlus className="mr-1" /> Register
-                                </button>
-                                <RegisterForm registerVisible={registerVisible} loginModal={this.loginModal}  registerModal={this.registerModal}/>
-                            </NavItem>
+                            {_.isEmpty(authen) ? (
+                                <>
+                                    <NavItem className="mr-3">
+                                        <p
+                                            className="login-link text-white cursor-point mb-0"
+                                            onClick={() =>
+                                                this.loginModal(true)
+                                            }
+                                        >
+                                            Login
+                                        </p>
+                                        <LoginForm
+                                            registerModal={this.registerModal}
+                                            loginModal={this.loginModal}
+                                            signInVisible={signInVisible}
+                                        />
+                                    </NavItem>
+                                    <NavItem>
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary btn-sm"
+                                            onClick={() =>
+                                                this.registerModal(true)
+                                            }
+                                        >
+                                            <FaUserPlus className="mr-1" />{' '}
+                                            Register
+                                        </button>
+                                    </NavItem>
+                                </>
+                            ) : (
+                                <NavItem>
+                                    <Dropdown overlay={menu}>
+                                        <Avatar icon="user" />
+                                    </Dropdown>
+                                </NavItem>
+                            )}
+                            <RegisterForm
+                                registerVisible={registerVisible}
+                                loginModal={this.loginModal}
+                                registerModal={this.registerModal}
+                            />
                         </Nav>
                     </Collapse>
                 </Navbar>
@@ -75,4 +131,13 @@ class Header extends Component {
     }
 }
 
-export default Header;
+const mapStateToProps = state => {
+    return {
+        authen: state.Authenticate
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    null
+)(Header);

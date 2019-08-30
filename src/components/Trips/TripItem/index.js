@@ -11,7 +11,7 @@ class TripItem extends PureComponent {
     }
 
     render() {
-        const { trips, priceFont, large } = this.props;
+        const { trips = [], priceFont, large } = this.props;
 
         return (
             <>

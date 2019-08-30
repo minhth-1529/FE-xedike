@@ -5,7 +5,8 @@ import * as Yup from 'yup';
 import { withFormik, Form as FormikForm, Field } from 'formik';
 import apiCaller from 'utils/apiCaller';
 import { toast, ToastContainer } from 'react-toastify';
-
+import { connect } from 'react-redux';
+import { authenLogin } from 'services/Authen/actions.js';
 const FormItem = Form.Item;
 
 class LoginForm extends PureComponent {
@@ -111,7 +112,7 @@ class LoginForm extends PureComponent {
     }
 }
 
-export default withFormik({
+const withFormikHOC = withFormik({
     mapPropsToValues() {
         return {
             email: '',
@@ -135,11 +136,12 @@ export default withFormik({
         apiCaller('api/users/login', 'POST', values)
             .then(res => {
                 if (res.status === 200) {
-                    toast.success(res.data.statusText, {
+                    toast.success(res.data.message, {
                         onClose: () => {
                             props.loginModal(false);
                             setFieldValue('spinning', false);
                             resetForm();
+                            props.authenLogin(res.data.token);
                         }
                     });
                 }
@@ -149,4 +151,17 @@ export default withFormik({
                 setFieldError('password', err.response.data);
             });
     }
-})(LoginForm);
+});
+
+const mapDispatchToProps = dispatch => {
+    return {
+        authenLogin: payload => {
+            dispatch(authenLogin(payload));
+        }
+    };
+};
+
+export default connect(
+    null,
+    mapDispatchToProps
+)(withFormikHOC(LoginForm));
