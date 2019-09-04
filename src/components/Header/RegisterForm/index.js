@@ -203,8 +203,8 @@ class RegisterForm extends PureComponent {
                                     size="large"
                                     className="d-block"
                                     name="DOB"
-                                    onChange={(date, dateString) =>
-                                    setFieldValue('DOB', dateString)
+                                    onChange={value =>
+                                    setFieldValue('DOB', value)
                                 }
                                 />
                             </FormItem>

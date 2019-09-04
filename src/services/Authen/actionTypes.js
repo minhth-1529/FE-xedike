@@ -1,1 +1,0 @@
-export const AUTHEN_LOGIN = 'AUTHEN_LOGIN';

@@ -9,7 +9,7 @@ import apiCaller from 'utils/apiCaller';
 import { toast, ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux';
 import { searchTrips } from 'services/Trip/actions.js';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 
 const FormItem = Form.Item;
@@ -267,7 +267,9 @@ const withFormikHOC = withFormik({
     }
 });
 
-export default withRouter(connect(
-    null,
-    mapDispatchToProps
-)(withFormikHOC(BookingForm)));
+export default withRouter(
+    connect(
+        null,
+        mapDispatchToProps
+    )(withFormikHOC(BookingForm))
+);

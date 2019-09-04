@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import { ModalCustom } from '../styled';
-import { Form, Input, Button, Icon, Spin } from 'antd';
+import { Form, Input, Button, Icon, Spin, notification } from 'antd';
 import * as Yup from 'yup';
 import { withFormik, Form as FormikForm, Field } from 'formik';
 import apiCaller from 'utils/apiCaller';
-import { toast, ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux';
-import { authenLogin } from 'services/Authen/actions.js';
+import { authLogin } from 'services/Auth/actions.js';
+import jwtDecode from 'jwt-decode';
+
 const FormItem = Form.Item;
 
 class LoginForm extends PureComponent {
@@ -28,7 +29,7 @@ class LoginForm extends PureComponent {
                 visible={signInVisible}
                 onCancel={() => loginModal(false)}
             >
-                <Spin spinning={values.spinning} tip="Loading...">
+                <Spin spinning={!errors && values.spinning} tip="Loading...">
                     <FormikForm onSubmit={handleSubmit}>
                         <FormItem
                             validateStatus={
@@ -106,7 +107,6 @@ class LoginForm extends PureComponent {
                         </div>
                     </FormikForm>
                 </Spin>
-                <ToastContainer autoClose={2000} />
             </ModalCustom>
         );
     }
@@ -126,7 +126,7 @@ const withFormikHOC = withFormik({
             .email('Email is invalid'),
         password: Yup.string()
             .required('Password is required')
-            .min(6, 'Password must have min 3 characters')
+            .min(3, 'Password must have min 3 characters')
     }),
     handleSubmit: (
         values,
@@ -135,16 +135,15 @@ const withFormikHOC = withFormik({
         setFieldValue('spinning', true);
         apiCaller('api/users/login', 'POST', values)
             .then(res => {
-                if (res.status === 200) {
-                    toast.success(res.data.message, {
-                        onClose: () => {
-                            props.loginModal(false);
-                            setFieldValue('spinning', false);
-                            resetForm();
-                            props.authenLogin(res.data.token);
-                        }
-                    });
-                }
+                setFieldValue('spinning', false);
+                resetForm();
+                props.authLogin(res.data.token);
+                notification.success({
+                    message: 'Login successfully',
+                    duration: 2.5,
+                    description: `Welcome ${jwtDecode(res.data.token).fullName}`,
+                    placement: 'topLeft',
+                });
             })
             .catch(err => {
                 setFieldError('email', err.response.data);
@@ -155,8 +154,8 @@ const withFormikHOC = withFormik({
 
 const mapDispatchToProps = dispatch => {
     return {
-        authenLogin: payload => {
-            dispatch(authenLogin(payload));
+        authLogin: payload => {
+            dispatch(authLogin(payload));
         }
     };
 };

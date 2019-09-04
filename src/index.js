@@ -17,9 +17,10 @@ import { Provider } from 'react-redux';
 import { rootReducers } from './services/reducers.js';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
-const store = createStore(rootReducers, composeWithDevTools(
-    applyMiddleware(thunk),
-  ));
+const store = createStore(
+    rootReducers,
+    composeWithDevTools(applyMiddleware(thunk))
+);
 
 ReactDOM.render(
     <Provider store={store}>

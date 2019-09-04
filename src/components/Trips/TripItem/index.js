@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Icon, Alert } from 'antd';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { fetchTripsRequest } from 'services/Trip/actions';
+import { getTrips } from 'services/Trip/actions';
 import { Price, Thumb } from './styled';
 
 class TripItem extends PureComponent {
@@ -88,7 +88,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchAllTrip: () => {
-            dispatch(fetchTripsRequest());
+            dispatch(getTrips());
         }
     };
 };

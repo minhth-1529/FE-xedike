@@ -8,7 +8,8 @@ import RegisterForm from './RegisterForm';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Avatar, Menu, Dropdown } from 'antd';
-import _ from 'lodash';
+import { authLogout } from 'services/Auth/actions.js';
+
 class Header extends Component {
     constructor(props) {
         super(props);
@@ -34,36 +35,16 @@ class Header extends Component {
 
     render() {
         const { signInVisible, registerVisible } = this.state;
-        const {authen} = this.props;
+        const { auth } = this.props;
 
         const menu = (
             <Menu>
+                <Menu.Item><Link to="/profile">Personal info</Link></Menu.Item>
                 <Menu.Item>
-                    <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href="http://www.alipay.com/"
-                    >
-                        1st menu item
-                    </a>
+                    <Link to="/profile">History trips</Link>
                 </Menu.Item>
                 <Menu.Item>
-                    <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href="http://www.taobao.com/"
-                    >
-                        2nd menu item
-                    </a>
-                </Menu.Item>
-                <Menu.Item>
-                    <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href="http://www.tmall.com/"
-                    >
-                        3rd menu item
-                    </a>
+                    <a onClick={() => this.props.authLogout()}>Logout</a>
                 </Menu.Item>
             </Menu>
         );
@@ -81,7 +62,7 @@ class Header extends Component {
                                     Trip
                                 </a>
                             </NavItem>
-                            {_.isEmpty(authen) ? (
+                            {!auth.authenticate ? (
                                 <>
                                     <NavItem className="mr-3">
                                         <p
@@ -106,7 +87,7 @@ class Header extends Component {
                                                 this.registerModal(true)
                                             }
                                         >
-                                            <FaUserPlus className="mr-1" />{' '}
+                                            <FaUserPlus className="mr-1" />
                                             Register
                                         </button>
                                     </NavItem>
@@ -114,7 +95,10 @@ class Header extends Component {
                             ) : (
                                 <NavItem>
                                     <Dropdown overlay={menu}>
-                                        <Avatar icon="user" />
+                                        <Avatar
+                                            icon="user"
+                                            className="cursor-point"
+                                        />
                                     </Dropdown>
                                 </NavItem>
                             )}
@@ -133,11 +117,19 @@ class Header extends Component {
 
 const mapStateToProps = state => {
     return {
-        authen: state.Authenticate
+        auth: state.Authenticate
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        authLogout: () => {
+            dispatch(authLogout());
+        }
     };
 };
 
 export default connect(
     mapStateToProps,
-    null
+    mapDispatchToProps
 )(Header);
