@@ -3,7 +3,7 @@ import apiCaller from 'utils/apiCaller';
 
 export const getTrips = () => {
     return dispatch => {
-        return apiCaller('api/trips', 'GET', null).then(res => {
+        return apiCaller('trips', 'GET', null).then(res => {
             dispatch({
                 type: GET_TRIPS,
                 payload: res.data

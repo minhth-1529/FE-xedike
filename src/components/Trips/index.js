@@ -1,23 +1,43 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Section } from './styled';
 import TripItem from './TripItem';
+import { Button } from 'antd';
+import { connect } from 'react-redux';
+import { getTrips } from 'services/Trip/actions';
 
-class Trips extends Component {
+class Trips extends PureComponent {
+
+    componentDidMount() {
+        this.props.getTrips();
+    }
+    
+
     render() {
+        const {trips = []} = this.props;
+
         return (
             <Section>
                 <h2 className="text-center mb-5">Trip Recent</h2>
-                <div>
-                    <TripItem large priceFont="30px" />
-                </div>
+                <ul>
+                    <TripItem trips={trips} large priceFont="30px" />
+                </ul>
                 <div className="text-center mt-5">
-                    <button className="btn btn-outline-secondary btn-lg">
+                    <Button type="dashed" size="large">
                         Load more
-                    </button>
+                    </Button>
                 </div>
             </Section>
         );
     }
 }
 
-export default Trips;
+const mapStateToProps = state => {
+    return {
+        trips: state.Trips
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    {getTrips}
+)(Trips);

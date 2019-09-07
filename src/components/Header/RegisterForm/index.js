@@ -204,8 +204,8 @@ class RegisterForm extends PureComponent {
                                     className="d-block"
                                     name="DOB"
                                     onChange={value =>
-                                    setFieldValue('DOB', value)
-                                }
+                                        setFieldValue('DOB', value)
+                                    }
                                 />
                             </FormItem>
                         </div>
@@ -303,7 +303,7 @@ class RegisterForm extends PureComponent {
     }
 }
 
-export default withFormik({
+const withFormikHOC = withFormik({
     mapPropsToValues() {
         return {
             email: '',
@@ -320,7 +320,9 @@ export default withFormik({
             .required('Email is required')
             .email('Email is invalid'),
         fullName: Yup.string().required('Full name is required'),
-        password: Yup.string().required('Password is required'),
+        password: Yup.string()
+            .required('Password is required')
+            .min(3, 'Password must have min 3 characters'),
         verifyPassword: Yup.string()
             .required('Verify password is required')
             .oneOf([Yup.ref('password'), null], 'Passwords must match'),
@@ -329,7 +331,7 @@ export default withFormik({
         userType: Yup.string().required('User type is required')
     }),
     handleSubmit: (values, { resetForm, props, setFieldError }) => {
-        apiCaller('api/users', 'POST', values)
+        apiCaller('users', 'POST', values)
             .then(res => {
                 if (res.status === 200) {
                     toast.success(res.data.statusText, {
@@ -346,4 +348,6 @@ export default withFormik({
                 setFieldError('phoneNumber', err.response.data.phoneNumber);
             });
     }
-})(RegisterForm);
+});
+
+export default withFormikHOC(RegisterForm);

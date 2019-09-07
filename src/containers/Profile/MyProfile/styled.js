@@ -53,5 +53,3 @@ export const UploadCustom = styled(Upload)`
         transition: opacity 0.2s ease-in-out;
     }
 `;
-
-export const Body = styled(Wrapper)``;

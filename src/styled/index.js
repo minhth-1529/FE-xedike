@@ -6,3 +6,7 @@ export const Wrapper = styled.div`
     padding: 16px;
     box-shadow: 0 0px 4px rgba(0, 0, 0, 0.1);
 `;
+
+export const BodyWrapper = styled.div`
+    margin: 32px 0;
+`;

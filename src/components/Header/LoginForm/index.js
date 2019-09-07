@@ -7,6 +7,7 @@ import apiCaller from 'utils/apiCaller';
 import { connect } from 'react-redux';
 import { authLogin } from 'services/Auth/actions.js';
 import jwtDecode from 'jwt-decode';
+import axios from 'axios';
 
 const FormItem = Form.Item;
 
@@ -133,10 +134,12 @@ const withFormikHOC = withFormik({
         { resetForm, setFieldValue, setFieldError, props }
     ) => {
         setFieldValue('spinning', true);
-        apiCaller('api/users/login', 'POST', values)
+        apiCaller('users/login', 'POST', values)
             .then(res => {
                 setFieldValue('spinning', false);
+                axios.defaults.headers.common['token'] = res.data.token;
                 resetForm();
+                props.loginModal(false);
                 props.authLogin(res.data.token);
                 notification.success({
                     message: 'Login successfully',

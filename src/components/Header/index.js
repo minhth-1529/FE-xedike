@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Logo from 'assets/images/logo.png';
 import { Navbar, Nav, NavItem, Collapse } from 'reactstrap';
 import { HeaderContainer } from './styled';
 import { FaUserPlus } from 'react-icons/fa';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Avatar, Menu, Dropdown } from 'antd';
 import { authLogout } from 'services/Auth/actions.js';
 
-class Header extends Component {
+class Header extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,12 +39,17 @@ class Header extends Component {
 
         const menu = (
             <Menu>
-                <Menu.Item><Link to="/profile">Personal info</Link></Menu.Item>
+                <Menu.Item>
+                    <Link to="/profile">Personal info</Link>
+                </Menu.Item>
                 <Menu.Item>
                     <Link to="/profile">History trips</Link>
                 </Menu.Item>
                 <Menu.Item>
-                    <a onClick={() => this.props.authLogout()}>Logout</a>
+                    <a onClick={() => {
+                        this.props.authLogout();
+                        this.props.history.push('/')
+                    }}>Logout</a>
                 </Menu.Item>
             </Menu>
         );
@@ -129,7 +134,9 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Header);
+export default withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(Header)
+);

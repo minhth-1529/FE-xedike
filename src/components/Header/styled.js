@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { Modal } from 'antd';
-import theme from 'theme';
 
 export const HeaderContainer = styled.header`
-    background-color: ${theme.headerColor};
-    /* margin-bottom: 15px; */
+    background-color: ${props => props.theme.headerColor};
+    position: sticky;
+    top: 0;
+    z-index: 999;
 
     .logo {
         width: auto;

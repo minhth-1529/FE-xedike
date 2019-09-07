@@ -1,23 +1,18 @@
 import React, { PureComponent } from 'react';
-import { Icon, Alert } from 'antd';
+import { Icon } from 'antd';
 import _ from 'lodash';
-import { connect } from 'react-redux';
-import { getTrips } from 'services/Trip/actions';
 import { Price, Thumb } from './styled';
+import {Link} from 'react-router-dom';
 
 class TripItem extends PureComponent {
-    componentDidMount() {
-        this.props.fetchAllTrip();
-    }
-
     render() {
-        const { trips = [], priceFont, large } = this.props;
+        const { trips, priceFont, large } = this.props;
 
         return (
             <>
                 { _.map(trips, (item, index) => {
                     return (
-                        <div
+                        <li
                             className={index !== 0 ? 'd-flex mt-3' : 'd-flex'}
                             key={index}
                         >
@@ -47,7 +42,7 @@ class TripItem extends PureComponent {
                                 />
                                 <div>
                                     <p className="mb-1">
-                                        {_.get(item.driverID, 'fullName', '')}
+                                        {item.driverID.fullName}
                                     </p>
                                     <div className="d-flex align-items-center">
                                         <Icon
@@ -67,11 +62,11 @@ class TripItem extends PureComponent {
                                 {item.fee} <sup>vnd</sup>
                             </Price>
                             <div className="flex-grow-0">
-                                <button className={`btn btn-success ${large && 'btn-lg'}`}>
+                                <Link to={`/booking-trip/${item._id}`} className={`btn btn-success ${large && 'btn-lg'}`}>
                                     Book now
-                                </button>
+                                </Link>
                             </div>
-                        </div>
+                        </li>
                     );
                 }) }
             </>
@@ -79,21 +74,4 @@ class TripItem extends PureComponent {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        trips: state.Trips
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchAllTrip: () => {
-            dispatch(getTrips());
-        }
-    };
-};
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(TripItem);
+export default TripItem;

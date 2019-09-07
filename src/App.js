@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
-import MyProfile from 'containers/Profile/MyProfile';
-import HomePage from 'containers/HomePage';
-import Header from 'components/Header';
+import MyProfile from './containers/Profile/MyProfile';
+import HomePage from './containers/HomePage';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import Trips from './containers/Trips';
+import BookingTrip from './containers/BookingTrip';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { authLogin } from 'services/Auth/actions.js';
+import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 
 class App extends Component {
-    componentDidMount() {
+    render() {
         if (localStorage && !localStorage.getItem('auth')) return;
 
-        this.props.authLogin(JSON.parse(localStorage.getItem('auth')));
-    }
+        const decoded = jwtDecode(localStorage.getItem('auth'));
+        if (Date.now() / 1000 <= decoded.exp) {
+            axios.defaults.headers.common[
+                'token'
+            ] = localStorage.getItem('auth');
+        }
 
-    render() {
         return (
             <div className="App">
                 <BrowserRouter>
@@ -22,23 +27,14 @@ class App extends Component {
                     <Switch>
                         <Route path="/" exact component={HomePage} />
                         <Route path="/trips/search" component={Trips} />
+                        <Route path="/booking-trip/:id" component={BookingTrip} />
                         <Route path="/profile" exact component={MyProfile} />
                     </Switch>
+                    <Footer />
                 </BrowserRouter>
             </div>
         );
     }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        authLogin: payload => {
-            dispatch(authLogin(payload));
-        }
-    };
-};
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(App);
+export default App;

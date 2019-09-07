@@ -35,7 +35,7 @@ class BookingForm extends Component {
             setFieldValue('slot', stringObject.slot);
         }, 1);
 
-        apiCaller('api/provinces', 'GET', null)
+        apiCaller('provinces', 'GET', null)
             .then(res => {
                 this.setState({
                     locationArr: res.data
@@ -255,7 +255,7 @@ const withFormikHOC = withFormik({
         props.history.push(`/trips/search?${string}`);
 
         if (!props.atHome) {
-            apiCaller(`api/trips/search?${string}`, 'POST', null)
+            apiCaller(`trips/search?${string}`, 'POST', null)
                 .then(res => {
                     props.searchTrips(res.data);
                 })

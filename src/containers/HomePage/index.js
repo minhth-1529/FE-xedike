@@ -1,22 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TripBooking from 'components/TripBookingForm';
 import Introduction from 'components/Introduction/index';
 import WhyChoose from 'components/WhyChoose';
 import Summary from 'components/Summary';
 import Trips from 'components/Trips';
 
-class HpmePage extends Component {
-    render() {
-        return (
-            <>
-                <TripBooking />
-                <Trips />
-                <Introduction />
-                <WhyChoose />
-                <Summary />
-            </>
-        );
-    }
-}
+const HomePage = () => {
+    return (
+        <>
+            <TripBooking />
+            <Trips />
+            <Introduction />
+            <WhyChoose />
+            <Summary />
+        </>
+    );
+};
 
-export default HpmePage;
+export default HomePage;

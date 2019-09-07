@@ -6,13 +6,24 @@ let initialState = {
     authenticate: false
 };
 
+const user =
+    (localStorage.getItem('auth') && jwtDecode(localStorage.getItem('auth'))) ||
+    {};
+if (user) {
+    if(Date.now()/1000 <= user.exp){
+        initialState = {
+            user: user,
+            authenticate: true
+        };
+    }
+}
+
 export const Authenticate = (state = initialState, action) => {
     switch (action.type) {
         case AUTH_LOGIN:
-            localStorage.setItem('auth', JSON.stringify(action.payload));
+            localStorage.setItem('auth', action.payload);
 
             return {
-                ...state,
                 user: jwtDecode(action.payload),
                 authenticate: true
             };
@@ -21,7 +32,6 @@ export const Authenticate = (state = initialState, action) => {
             localStorage.removeItem('auth');
 
             return {
-                ...state,
                 user: {},
                 authenticate: false
             };

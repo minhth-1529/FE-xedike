@@ -11,7 +11,7 @@ class TripBooking extends Component {
                 <Parallax
                     bgImage={ParallaxImg}
                     bgImageAlt="trip booking"
-                    strength={300}
+                    strength={700}
                 >
                     <TripBookingContainer>
                         <div className="container">

@@ -4,8 +4,8 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import { ThemeProvider } from 'styled-components';
-import theme from './theme';
 
+import theme from './theme';
 import './index.css';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
