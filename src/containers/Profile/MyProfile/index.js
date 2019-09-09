@@ -8,19 +8,15 @@ import apiCaller from 'utils/apiCaller';
 import PersonalForm from './PersonalForm';
 import PasswordForm from './PasswordForm';
 import _ from 'lodash';
-import {Wrapper,BodyWrapper} from 'styled';
+import { Wrapper, BodyWrapper } from 'styled';
+
 class MyProfile extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            data: {},
-            fullName: '',
-            registerDate: '',
-            avatar: '',
-            email: '',
-            phoneNumber: '',
-            DOB: undefined
+            user: {},
+            avatar: ''
         };
     }
 
@@ -31,28 +27,22 @@ class MyProfile extends PureComponent {
 
         apiCaller(`users/${auth.user.id}`, 'GET', null)
             .then(res => {
-                // TODO upload now fullName
-                this.setState({
-                    data: {
-                        email: res.data.email,
-                        phoneNumber: res.data.phoneNumber,
-                        DOB: res.data.DOB,
-                        fullName: res.data.fullName
-                    },
-                    registerDate: moment(res.data.registerDate).format(
-                        'DD/MM/YYYY'
-                    )
+                // TODO update now fullName
+                _.map(Object.keys(res.data), item => {
+                    this.setState({
+                        [item]: res.data[item]
+                    });
                 });
             })
-            .catch(err => console.log(err.response.data));
+            .catch(err => console.log(err.response));
     }
 
     render() {
         const { auth } = this.props;
 
-        const { registerDate, avatar, data } = this.state;
+        const { avatar, user } = this.state;
 
-        let abc = _.isEmpty(data);
+        let emptyUser = _.isEmpty(user);
 
         return (
             <div className="container">
@@ -82,12 +72,14 @@ class MyProfile extends PureComponent {
                                             />
                                         </div>
                                     </UploadCustom>
-                                    <h5 className="mb-0">{data.fullName}</h5>
+                                    <h5 className="mb-0">{user.fullName}</h5>
                                 </div>
                                 <div className="mt-3 info fz-14">
                                     <p className="mb-0">
-                                        <strong>Active day:</strong>
-                                        {' '}{registerDate}
+                                        <strong>Active day:</strong>{' '}
+                                        {moment(user.registerDate).format(
+                                            'DD/MM/YYYY'
+                                        )}
                                     </p>
                                     <p className="mb-0">
                                         <strong>Your rating:</strong>
@@ -102,14 +94,14 @@ class MyProfile extends PureComponent {
                             <Wrapper>
                                 <h5 className="font-weight-normal d-flex align-items-center mb-4">
                                     <Icon type="user" className="mr-1" />
-                                    Personal info
+                                    Personal information
                                 </h5>
-                                {!abc && (
+                                {!emptyUser && (
                                     <PersonalForm
-                                        email={data.email}
-                                        fullName={data.fullName}
-                                        DOB={data.DOB}
-                                        phoneNumber={data.phoneNumber}
+                                        email={user.email}
+                                        fullName={user.fullName}
+                                        DOB={user.DOB}
+                                        phoneNumber={user.phoneNumber}
                                         id={auth.user.id}
                                     />
                                 )}

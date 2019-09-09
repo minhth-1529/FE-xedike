@@ -4,28 +4,28 @@ import TripItem from './TripItem';
 import { Button } from 'antd';
 import { connect } from 'react-redux';
 import { getTrips } from 'services/Trip/actions';
+import _ from 'lodash';
 
 class Trips extends PureComponent {
-
     componentDidMount() {
         this.props.getTrips();
     }
-    
 
     render() {
-        const {trips = []} = this.props;
+        const { trips } = this.props;
+        const isEmpty = _.isEmpty(trips);
 
         return (
             <Section>
                 <h2 className="text-center mb-5">Trip Recent</h2>
-                <ul>
-                    <TripItem trips={trips} large priceFont="30px" />
-                </ul>
-                <div className="text-center mt-5">
-                    <Button type="dashed" size="large">
-                        Load more
-                    </Button>
-                </div>
+                <TripItem trips={trips} large priceFont="30px" />
+                {!isEmpty && (
+                    <div className="text-center mt-5">
+                        <Button type="dashed" size="large">
+                            Load more
+                        </Button>
+                    </div>
+                )}
             </Section>
         );
     }
@@ -39,5 +39,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    {getTrips}
+    { getTrips }
 )(Trips);

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { DatePickerCustom, InputNumberCustom, ButtonCustom } from '../styled';
-import { Select, Form, Col, Row, Icon } from 'antd';
-import { withFormik, Form as FormikForm } from 'formik';
-import * as Yup from 'yup';
+import { Select, Form, Col, Row, Icon, notification } from 'antd';
+import { Formik } from 'formik';
+import { object, string } from 'yup';
 import _ from 'lodash';
 import queryString from 'query-string';
 import apiCaller from 'utils/apiCaller';
@@ -20,28 +20,34 @@ class BookingForm extends Component {
         super(props);
 
         this.state = {
-            locationArr: []
+            locationArr: [],
+            locationFrom: undefined,
+            locationTo: undefined,
+            startTime: undefined,
+            slot: 2
         };
     }
 
     componentDidMount() {
-        const { setFieldValue, location } = this.props;
-        const stringObject = queryString.parse(location.search);
-
-        setTimeout(() => {
-            setFieldValue('locationFrom', stringObject.from);
-            setFieldValue('locationTo', stringObject.to);
-            setFieldValue('startTime', moment(stringObject.startTime));
-            setFieldValue('slot', stringObject.slot);
-        }, 1);
-
         apiCaller('provinces', 'GET', null)
             .then(res => {
                 this.setState({
                     locationArr: res.data
                 });
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err.response));
+
+        if (this.props.atHome) return;
+
+        const { location } = this.props;
+        const stringObject = queryString.parse(location.search);
+
+        this.setState({
+            locationFrom: stringObject.from,
+            locationTo: stringObject.to,
+            startTime: moment(stringObject.startTime),
+            slot: stringObject.slot
+        });
     }
 
     render() {
@@ -52,173 +58,252 @@ class BookingForm extends Component {
                 </Option>
             );
         });
-        const { atHome, setFieldValue, values, touched, errors } = this.props;
-
+        const { atHome, history, searchTrips } = this.props;
+        const { locationFrom, locationTo, startTime, slot } = this.state;
+        console.log(this.state);
         return (
-            <FormikForm className="trip-booking__form">
-                <Row type={atHome && 'flex'} align="bottom">
-                    <Col className={atHome && 'px-1'} md={atHome ? 6 : 24}>
-                        <label
-                            className={
-                                atHome ? 'font-weight-bold text-white mb-0' : ''
-                            }
-                        >
-                            From
-                        </label>
-                        <FormItem
-                            className={atHome ? 'mb-0' : ''}
-                            validateStatus={
-                                touched.locationFrom &&
-                                errors.locationFrom &&
-                                'error'
-                            }
-                            help={
-                                !atHome &&
-                                touched.locationFrom &&
-                                errors.locationFrom
-                            }
-                        >
-                            <Select
-                                name="locationFrom"
-                                size="large"
-                                showSearch
-                                placeholder="Enter location"
-                                optionFilterProp="children"
-                                value={values.locationFrom}
-                                onChange={value =>
-                                    setFieldValue('locationFrom', value)
-                                }
-                                suffixIcon={
-                                    <Icon
-                                        type="environment"
-                                        style={{ color: '#28a745' }}
+            <Formik
+                initialValues={{
+                    locationFrom: locationFrom || undefined,
+                    locationTo: locationTo,
+                    startTime: startTime,
+                    slot: slot
+                }}
+                validationSchema={object().shape({
+                    locationFrom: string().required('This field is required'),
+                    locationTo: string().required('This field is required'),
+                    startTime: string().required('This field is required')
+                })}
+                onSubmit={values => {
+                    const string = queryString.stringify({
+                        from: values.locationFrom,
+                        to: values.locationTo,
+                        startTime: values.startTime,
+                        slot: values.slot || 2
+                    });
+
+                    history.push(`/trips/search?${string}`);
+
+                    if (!atHome) {
+                        apiCaller(`trips/search?${string}`, 'POST', null)
+                            .then(res => {
+                                searchTrips(res.data);
+                            })
+                            .catch(err => {
+                                toast.error(err.response.data.message);
+                                searchTrips([]);
+                            });
+                    }
+                }}
+                render={({
+                    setFieldValue,
+                    values,
+                    touched,
+                    errors,
+                    handleSubmit
+                }) => (
+                    <form onSubmit={handleSubmit}>
+                        <Row type={atHome && 'flex'} align="bottom">
+                            <Col
+                                className={atHome && 'px-1'}
+                                md={atHome ? 6 : 24}
+                            >
+                                <label
+                                    className={
+                                        atHome
+                                            ? 'font-weight-bold text-white mb-0'
+                                            : ''
+                                    }
+                                >
+                                    From
+                                </label>
+                                <FormItem
+                                    className={atHome ? 'mb-0' : ''}
+                                    validateStatus={
+                                        touched.locationFrom &&
+                                        errors.locationFrom &&
+                                        'error'
+                                    }
+                                    help={
+                                        !atHome &&
+                                        touched.locationFrom &&
+                                        errors.locationFrom
+                                    }
+                                >
+                                    <Select
+                                        name="locationFrom"
+                                        size="large"
+                                        showSearch
+                                        placeholder="Enter location"
+                                        optionFilterProp="children"
+                                        value={values.locationFrom}
+                                        onChange={value =>
+                                            setFieldValue('locationFrom', value)
+                                        }
+                                        suffixIcon={
+                                            <Icon
+                                                type="environment"
+                                                style={{ color: '#28a745' }}
+                                            />
+                                        }
+                                    >
+                                        {locations}
+                                    </Select>
+                                </FormItem>
+                            </Col>
+                            <Col
+                                className={atHome && 'px-1'}
+                                md={atHome ? 6 : 24}
+                            >
+                                <label
+                                    className={
+                                        atHome
+                                            ? 'font-weight-bold text-white mb-0'
+                                            : ''
+                                    }
+                                >
+                                    To
+                                </label>
+                                <FormItem
+                                    className={atHome ? 'mb-0' : ''}
+                                    validateStatus={
+                                        touched.locationTo &&
+                                        errors.locationTo &&
+                                        'error'
+                                    }
+                                    help={
+                                        !atHome &&
+                                        touched.locationTo &&
+                                        errors.locationTo
+                                    }
+                                >
+                                    <Select
+                                        name="locationTo"
+                                        size="large"
+                                        showSearch
+                                        value={values.locationTo}
+                                        placeholder="Enter location"
+                                        optionFilterProp="children"
+                                        onChange={value =>
+                                            setFieldValue('locationTo', value)
+                                        }
+                                        suffixIcon={
+                                            <Icon
+                                                type="environment"
+                                                style={{ color: '#dc3545' }}
+                                            />
+                                        }
+                                    >
+                                        {locations}
+                                    </Select>
+                                </FormItem>
+                            </Col>
+                            <Col
+                                className={atHome && 'px-1'}
+                                md={atHome ? 4 : 24}
+                            >
+                                <label
+                                    className={
+                                        atHome
+                                            ? 'font-weight-bold text-white mb-0'
+                                            : ''
+                                    }
+                                >
+                                    Date
+                                </label>
+                                <FormItem
+                                    className={atHome ? 'mb-0' : ''}
+                                    validateStatus={
+                                        touched.startTime &&
+                                        errors.startTime &&
+                                        'error'
+                                    }
+                                    help={
+                                        !atHome &&
+                                        touched.startTime &&
+                                        errors.startTime
+                                    }
+                                >
+                                    <DatePickerCustom
+                                        size="large"
+                                        format="DD/MM/YYYY"
+                                        name="startTime"
+                                        value={values.startTime}
+                                        onChange={value =>
+                                            setFieldValue(
+                                                'startTime',
+                                                value === null
+                                                    ? undefined
+                                                    : value
+                                            )
+                                        }
                                     />
-                                }
+                                </FormItem>
+                            </Col>
+                            <Col
+                                className={atHome && 'px-1'}
+                                md={atHome ? 2 : 24}
                             >
-                                {locations}
-                            </Select>
-                        </FormItem>
-                    </Col>
-                    <Col className={atHome && 'px-1'} md={atHome ? 6 : 24}>
-                        <label
-                            className={
-                                atHome ? 'font-weight-bold text-white mb-0' : ''
-                            }
-                        >
-                            To
-                        </label>
-                        <FormItem
-                            className={atHome ? 'mb-0' : ''}
-                            validateStatus={
-                                touched.locationTo &&
-                                errors.locationTo &&
-                                'error'
-                            }
-                            help={
-                                !atHome &&
-                                touched.locationTo &&
-                                errors.locationTo
-                            }
-                        >
-                            <Select
-                                name="locationTo"
-                                size="large"
-                                showSearch
-                                value={values.locationTo}
-                                placeholder="Enter location"
-                                optionFilterProp="children"
-                                onChange={value =>
-                                    setFieldValue('locationTo', value)
-                                }
-                                suffixIcon={
-                                    <Icon
-                                        type="environment"
-                                        style={{ color: '#dc3545' }}
+                                <label
+                                    className={
+                                        atHome
+                                            ? 'font-weight-bold text-white mb-0'
+                                            : ''
+                                    }
+                                >
+                                    Slot
+                                </label>
+                                <FormItem
+                                    className={atHome ? 'mb-0' : ''}
+                                    validateStatus={
+                                        touched.slot && errors.slot && 'error'
+                                    }
+                                    help={touched.slot && errors.slot}
+                                >
+                                    <InputNumberCustom
+                                        min={1}
+                                        max={10}
+                                        defaultValue={2}
+                                        size="large"
+                                        // value={values.slot}
+                                        name="slot"
+                                        onChange={value =>
+                                            setFieldValue('slot', value)
+                                        }
                                     />
-                                }
+                                </FormItem>
+                            </Col>
+                            <Col
+                                className={atHome ? 'px-1' : ''}
+                                md={atHome ? 6 : 24}
                             >
-                                {locations}
-                            </Select>
-                        </FormItem>
-                    </Col>
-                    <Col className={atHome && 'px-1'} md={atHome ? 4 : 24}>
-                        <label
-                            className={
-                                atHome ? 'font-weight-bold text-white mb-0' : ''
-                            }
-                        >
-                            Date
-                        </label>
-                        <FormItem
-                            className={atHome ? 'mb-0' : ''}
-                            validateStatus={
-                                touched.startTime && errors.startTime && 'error'
-                            }
-                            help={
-                                !atHome && touched.startTime && errors.startTime
-                            }
-                        >
-                            <DatePickerCustom
-                                size="large"
-                                format="DD/MM/YYYY"
-                                name="startTime"
-                                value={values.startTime}
-                                onChange={v => setFieldValue('startTime', v)}
-                            />
-                        </FormItem>
-                    </Col>
-                    <Col className={atHome && 'px-1'} md={atHome ? 2 : 24}>
-                        <label
-                            className={
-                                atHome ? 'font-weight-bold text-white mb-0' : ''
-                            }
-                        >
-                            Slot
-                        </label>
-                        <FormItem
-                            className={atHome ? 'mb-0' : ''}
-                            validateStatus={
-                                touched.slot && errors.slot && 'error'
-                            }
-                            help={touched.slot && errors.slot}
-                        >
-                            <InputNumberCustom
-                                min={1}
-                                max={10}
-                                defaultValue={2}
-                                size="large"
-                                // value={values.slot}
-                                name="slot"
-                                onChange={value => setFieldValue('slot', value)}
-                            />
-                        </FormItem>
-                    </Col>
-                    <Col className={atHome ? 'px-1' : ''} md={atHome ? 6 : 24}>
-                        {atHome ? (
-                            <ButtonCustom
-                                type="primary"
-                                size="large"
-                                block
-                                htmlType="submit"
-                            >
-                                <Icon type="car" />
-                                Search
-                            </ButtonCustom>
-                        ) : (
-                            <ButtonCustom
-                                type="primary"
-                                size="large"
-                                block
-                                htmlType="submit"
-                            >
-                                <Icon type="car" />
-                                Search
-                            </ButtonCustom>
-                        )}
-                    </Col>
-                </Row>
-                <ToastContainer autoClose={2000} />
-            </FormikForm>
+                                {atHome ? (
+                                    <ButtonCustom
+                                        type="primary"
+                                        size="large"
+                                        block
+                                        htmlType="submit"
+                                    >
+                                        <Icon type="car" />
+                                        Search
+                                    </ButtonCustom>
+                                ) : (
+                                    <ButtonCustom
+                                        type="primary"
+                                        size="large"
+                                        block
+                                        htmlType="submit"
+                                    >
+                                        <Icon type="car" />
+                                        Search
+                                    </ButtonCustom>
+                                )}
+                            </Col>
+                        </Row>
+                        <ToastContainer autoClose={2000} />
+                    </form>
+                )}
+            />
         );
     }
 }
@@ -231,45 +316,9 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-const withFormikHOC = withFormik({
-    mapPropsToValues() {
-        return {
-            locationFrom: undefined,
-            locationTo: undefined,
-            startTime: undefined,
-            slot: 2
-        };
-    },
-    validationSchema: Yup.object().shape({
-        locationFrom: Yup.string().required('This field is required'),
-        locationTo: Yup.string().required('This field is required')
-    }),
-    handleSubmit: (values, { props }) => {
-        const string = queryString.stringify({
-            from: values.locationFrom,
-            to: values.locationTo,
-            startTime: values.startTime,
-            slot: values.slot || 2
-        });
-
-        props.history.push(`/trips/search?${string}`);
-
-        if (!props.atHome) {
-            apiCaller(`trips/search?${string}`, 'POST', null)
-                .then(res => {
-                    props.searchTrips(res.data);
-                })
-                .catch(err => {
-                    toast.error(err.response.data.message);
-                    props.searchTrips([]);
-                });
-        }
-    }
-});
-
 export default withRouter(
     connect(
         null,
         mapDispatchToProps
-    )(withFormikHOC(BookingForm))
+    )(BookingForm)
 );

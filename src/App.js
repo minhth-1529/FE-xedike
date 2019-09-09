@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import MyProfile from './containers/Profile/MyProfile';
+import DriverProfile from './containers/Profile/DriverProfile';
 import HomePage from './containers/HomePage';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Trips from './containers/Trips';
+import Search from './containers/Search';
 import BookingTrip from './containers/BookingTrip';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import axios from 'axios';
@@ -11,13 +12,13 @@ import jwtDecode from 'jwt-decode';
 
 class App extends Component {
     render() {
-        if (localStorage && !localStorage.getItem('auth')) return;
-
-        const decoded = jwtDecode(localStorage.getItem('auth'));
-        if (Date.now() / 1000 <= decoded.exp) {
-            axios.defaults.headers.common[
-                'token'
-            ] = localStorage.getItem('auth');
+        if (localStorage && localStorage.getItem('auth')) {
+            const decoded = jwtDecode(localStorage.getItem('auth'));
+            if (Date.now() / 1000 <= decoded.exp) {
+                axios.defaults.headers.common['token'] = localStorage.getItem(
+                    'auth'
+                );
+            }
         }
 
         return (
@@ -26,9 +27,16 @@ class App extends Component {
                     <Header />
                     <Switch>
                         <Route path="/" exact component={HomePage} />
-                        <Route path="/trips/search" component={Trips} />
-                        <Route path="/booking-trip/:id" component={BookingTrip} />
-                        <Route path="/profile" exact component={MyProfile} />
+                        <Route path="/trips/search" component={Search} />
+                        <Route
+                            path="/booking-trip/:id"
+                            component={BookingTrip}
+                        />
+                        <Route path="/my-profile" exact component={MyProfile} />
+                        <Route
+                            path="/driver-profile/:id"
+                            component={DriverProfile}
+                        />
                     </Switch>
                     <Footer />
                 </BrowserRouter>

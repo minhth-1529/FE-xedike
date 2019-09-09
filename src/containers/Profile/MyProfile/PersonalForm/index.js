@@ -28,7 +28,8 @@ class PersonalForm extends Component {
                     fullName: string().required('Full name is required'),
                     phoneNumber: string()
                         .matches(phoneRegExp, 'Phone number is not valid')
-                        .required('Phone number is required')
+                        .required('Phone number is required'),
+                    DOB: string().required('Day of birth is required')
                 })}
                 onSubmit={(values, { setFieldError }) => {
                     apiCaller(`users/personal/${id}`, 'PUT', values)
@@ -187,7 +188,12 @@ class PersonalForm extends Component {
                                 </label>
                             </div>
                             <div className="col-9">
-                                <FormItem>
+                                <FormItem
+                                    validateStatus={
+                                        touched.DOB && errors.DOB && 'error'
+                                    }
+                                    help={touched.DOB && errors.DOB}
+                                >
                                     <DatePicker
                                         format="DD/MM/YYYY"
                                         value={values.DOB}
@@ -195,7 +201,12 @@ class PersonalForm extends Component {
                                         className="d-block"
                                         name="DOB"
                                         onChange={value =>
-                                            setFieldValue('DOB', value)
+                                            setFieldValue(
+                                                'DOB',
+                                                value === null
+                                                    ? undefined
+                                                    : value
+                                            )
                                         }
                                     />
                                 </FormItem>

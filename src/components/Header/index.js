@@ -40,16 +40,20 @@ class Header extends PureComponent {
         const menu = (
             <Menu>
                 <Menu.Item>
-                    <Link to="/profile">Personal info</Link>
+                    <Link to="/my-profile">Personal info</Link>
                 </Menu.Item>
                 <Menu.Item>
                     <Link to="/profile">History trips</Link>
                 </Menu.Item>
                 <Menu.Item>
-                    <a onClick={() => {
-                        this.props.authLogout();
-                        this.props.history.push('/')
-                    }}>Logout</a>
+                    <a
+                        onClick={() => {
+                            this.props.authLogout();
+                            this.props.history.push('/');
+                        }}
+                    >
+                        Logout
+                    </a>
                 </Menu.Item>
             </Menu>
         );
@@ -63,9 +67,9 @@ class Header extends PureComponent {
                     <Collapse navbar>
                         <Nav className="ml-auto align-items-center" navbar>
                             <NavItem className="mr-3">
-                                <a href="/" className="text-white">
+                                <Link to="/trips/search" className="text-white">
                                     Trip
-                                </a>
+                                </Link>
                             </NavItem>
                             {!auth.authenticate ? (
                                 <>
@@ -95,23 +99,44 @@ class Header extends PureComponent {
                                             <FaUserPlus className="mr-1" />
                                             Register
                                         </button>
+                                        <RegisterForm
+                                            registerVisible={registerVisible}
+                                            loginModal={this.loginModal}
+                                            registerModal={this.registerModal}
+                                        />
                                     </NavItem>
                                 </>
                             ) : (
-                                <NavItem>
-                                    <Dropdown overlay={menu}>
-                                        <Avatar
-                                            icon="user"
-                                            className="cursor-point"
-                                        />
-                                    </Dropdown>
-                                </NavItem>
+                                <>
+                                    {auth.user.userType === 'driver' && (
+                                        <NavItem className="mr-3">
+                                            <p
+                                                className="login-link text-white cursor-point mb-0"
+                                                onClick={() =>
+                                                    this.loginModal(true)
+                                                }
+                                            >
+                                                Add car
+                                            </p>
+                                            <LoginForm
+                                                registerModal={
+                                                    this.registerModal
+                                                }
+                                                loginModal={this.loginModal}
+                                                signInVisible={signInVisible}
+                                            />
+                                        </NavItem>
+                                    )}
+                                    <NavItem>
+                                        <Dropdown overlay={menu}>
+                                            <Avatar
+                                                icon="user"
+                                                className="cursor-point"
+                                            />
+                                        </Dropdown>
+                                    </NavItem>
+                                </>
                             )}
-                            <RegisterForm
-                                registerVisible={registerVisible}
-                                loginModal={this.loginModal}
-                                registerModal={this.registerModal}
-                            />
                         </Nav>
                     </Collapse>
                 </Navbar>

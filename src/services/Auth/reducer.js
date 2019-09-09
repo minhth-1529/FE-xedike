@@ -1,5 +1,6 @@
 import { AUTH_LOGIN, AUTH_LOGOUT } from './actionTypes';
 import jwtDecode from 'jwt-decode';
+import axios from 'axios';
 
 let initialState = {
     user: {},
@@ -30,6 +31,7 @@ export const Authenticate = (state = initialState, action) => {
 
         case AUTH_LOGOUT:
             localStorage.removeItem('auth');
+            delete axios.defaults.headers.common['token'];
 
             return {
                 user: {},

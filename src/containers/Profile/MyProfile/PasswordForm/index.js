@@ -37,7 +37,6 @@ class PasswordForm extends PureComponent {
                             _.map(Object.keys(err.response.data), field => {
                                 setFieldError(field, err.response.data[field]);
                             });
-                            console.log(err.response)
                         });
                 }}
                 render={({ touched, errors, handleSubmit }) => (
