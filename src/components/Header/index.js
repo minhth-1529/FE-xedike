@@ -5,6 +5,7 @@ import { HeaderContainer } from './styled';
 import { FaUserPlus } from 'react-icons/fa';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import AddCarForm from './AddCarForm';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Avatar, Menu, Dropdown } from 'antd';
@@ -18,6 +19,12 @@ class Header extends PureComponent {
             registerVisible: false
         };
     }
+
+    addCarModal = value => {
+        this.setState({
+            addCarVisible: value,
+        });
+    };
 
     loginModal = value => {
         this.setState({
@@ -34,7 +41,7 @@ class Header extends PureComponent {
     };
 
     render() {
-        const { signInVisible, registerVisible } = this.state;
+        const { signInVisible, registerVisible, addCarVisible } = this.state;
         const { auth } = this.props;
 
         const menu = (
@@ -43,7 +50,7 @@ class Header extends PureComponent {
                     <Link to="/my-profile">Personal info</Link>
                 </Menu.Item>
                 <Menu.Item>
-                    <Link to="/profile">History trips</Link>
+                    <Link to="/history-trips">History trips</Link>
                 </Menu.Item>
                 <Menu.Item>
                     <a
@@ -113,17 +120,14 @@ class Header extends PureComponent {
                                             <p
                                                 className="login-link text-white cursor-point mb-0"
                                                 onClick={() =>
-                                                    this.loginModal(true)
+                                                    this.addCarModal(true)
                                                 }
                                             >
                                                 Add car
                                             </p>
-                                            <LoginForm
-                                                registerModal={
-                                                    this.registerModal
-                                                }
-                                                loginModal={this.loginModal}
-                                                signInVisible={signInVisible}
+                                            <AddCarForm
+                                                addCarModal={this.addCarModal}
+                                                addCarVisible={addCarVisible}
                                             />
                                         </NavItem>
                                     )}

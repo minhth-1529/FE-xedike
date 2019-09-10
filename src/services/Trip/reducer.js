@@ -1,4 +1,4 @@
-import { GET_TRIPS, SEARCH_TRIPS } from './actionTypes';
+import { GET_TRIPS, SEARCH_TRIPS, GET_HISTORY_TRIPS } from './actionTypes';
 
 let initialState = [];
 
@@ -7,6 +7,8 @@ export const Trips = (state = initialState, action) => {
         case GET_TRIPS:
             return action.payload;
         case SEARCH_TRIPS:
+            return action.payload;
+        case GET_HISTORY_TRIPS:
             return action.payload;
         default:
             return state;

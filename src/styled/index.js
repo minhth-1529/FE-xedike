@@ -13,4 +13,5 @@ export const Wrapper = styled.div`
 
 export const BodyWrapper = styled.div`
     margin: 32px 0;
+    flex-grow: 1;
 `;

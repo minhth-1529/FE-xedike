@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { DatePickerCustom, InputNumberCustom, ButtonCustom } from '../styled';
-import { Select, Form, Col, Row, Icon, notification } from 'antd';
+import { Select, Form, Col, Row, Icon } from 'antd';
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import _ from 'lodash';
@@ -60,11 +60,12 @@ class BookingForm extends Component {
         });
         const { atHome, history, searchTrips } = this.props;
         const { locationFrom, locationTo, startTime, slot } = this.state;
-        console.log(this.state);
+
         return (
             <Formik
+                enableReinitialize={true}
                 initialValues={{
-                    locationFrom: locationFrom || undefined,
+                    locationFrom: locationFrom,
                     locationTo: locationTo,
                     startTime: startTime,
                     slot: slot
@@ -79,7 +80,7 @@ class BookingForm extends Component {
                         from: values.locationFrom,
                         to: values.locationTo,
                         startTime: values.startTime,
-                        slot: values.slot || 2
+                        slot: values.slot
                     });
 
                     history.push(`/trips/search?${string}`);
@@ -102,7 +103,7 @@ class BookingForm extends Component {
                     errors,
                     handleSubmit
                 }) => (
-                    <form onSubmit={handleSubmit}>
+                    <form className="trip-booking__form" onSubmit={handleSubmit}>
                         <Row type={atHome && 'flex'} align="bottom">
                             <Col
                                 className={atHome && 'px-1'}
@@ -225,6 +226,7 @@ class BookingForm extends Component {
                                     }
                                 >
                                     <DatePickerCustom
+                                        allowClear={false}
                                         size="large"
                                         format="DD/MM/YYYY"
                                         name="startTime"

@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 
 class TripItem extends PureComponent {
     render() {
-        const { trips = [], priceFont, large } = this.props;
+        const { trips = [], priceFont, large, showBtn = true } = this.props;
+        console.log("TCL: TripItem -> render -> showBtn", showBtn)
         const isEmpty = _.isEmpty(trips);
 
         return (
@@ -80,15 +81,17 @@ class TripItem extends PureComponent {
                                     >
                                         {item.fee} <sup>vnd</sup>
                                     </Price>
-                                    <div className="flex-grow-0">
-                                        <Link
-                                            to={`/booking-trip/${item._id}`}
-                                            className={`btn btn-success ${large &&
-                                                'btn-lg'}`}
-                                        >
-                                            Book now
-                                        </Link>
-                                    </div>
+                                    {showBtn && (
+                                        <div className="flex-grow-0">
+                                            <Link
+                                                to={`/booking-trip/${item._id}`}
+                                                className={`btn btn-success ${large &&
+                                                    'btn-lg'}`}
+                                            >
+                                                Book now
+                                            </Link>
+                                        </div>
+                                    )}
                                 </li>
                             );
                         })}

@@ -1,22 +1,19 @@
 import React, { PureComponent } from 'react';
-import AvatarImg from 'assets/images/user-ic.png';
-import { Avatar, UploadCustom } from './styled';
 import { Icon } from 'antd';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import apiCaller from 'utils/apiCaller';
 import PersonalForm from './PersonalForm';
 import PasswordForm from './PasswordForm';
 import _ from 'lodash';
 import { Wrapper, BodyWrapper } from 'styled';
+import AvatarWrapper from 'components/Avatar';
 
 class MyProfile extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            user: {},
-            avatar: ''
+            user: {}
         };
     }
 
@@ -40,7 +37,7 @@ class MyProfile extends PureComponent {
     render() {
         const { auth } = this.props;
 
-        const { avatar, user } = this.state;
+        const { user } = this.state;
 
         let emptyUser = _.isEmpty(user);
 
@@ -49,46 +46,7 @@ class MyProfile extends PureComponent {
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
-                            <Avatar>
-                                <div className="text-center">
-                                    <UploadCustom
-                                        name="avatar"
-                                        listType="picture-card"
-                                        className={
-                                            avatar !== ''
-                                                ? 'avatar-uploader'
-                                                : 'avatar-uploader img-uploaded'
-                                        }
-                                    >
-                                        <img
-                                            className="avatar"
-                                            src={avatar}
-                                            alt="avatar"
-                                        />
-                                        <div className="btn-upload">
-                                            <Icon
-                                                type="upload"
-                                                style={{ fontSize: '24px' }}
-                                            />
-                                        </div>
-                                    </UploadCustom>
-                                    <h5 className="mb-0">{user.fullName}</h5>
-                                </div>
-                                <div className="mt-3 info fz-14">
-                                    <p className="mb-0">
-                                        <strong>Active day:</strong>{' '}
-                                        {moment(user.registerDate).format(
-                                            'DD/MM/YYYY'
-                                        )}
-                                    </p>
-                                    <p className="mb-0">
-                                        <strong>Your rating:</strong>
-                                    </p>
-                                    <p className="mb-0">
-                                        <strong>Total booking trip:</strong>
-                                    </p>
-                                </div>
-                            </Avatar>
+                            <AvatarWrapper registerDate={user.registerDate} fullName={user.fullName} isMyProfile userType={auth.user.userType} />
                         </div>
                         <div className="col-9">
                             <Wrapper>

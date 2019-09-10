@@ -17,27 +17,33 @@ code {
     cursor: pointer;
 }
 
-.fz-14{
+.fz-14 {
     font-size: 14px;
 }
 
-img{
+img {
     width: 100%;
 }
 
-.flex-grow-2{
+.flex-grow-2 {
     flex-grow: 2 !important;
 }
 
-ul{
+ul {
     margin: 0 !important;
     padding: 0;
 }
 
-li{
+li {
     list-style: none;
 }
 
-a:hover{
+a:hover {
     text-decoration: none !important;
+}
+
+.App {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }

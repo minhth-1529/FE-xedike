@@ -1,19 +1,17 @@
 import React, { PureComponent } from 'react';
-import AvatarImg from 'assets/images/user-ic.png';
-import { Avatar, UploadCustom } from './styled';
 import { Icon } from 'antd';
-import moment from 'moment';
 import apiCaller from 'utils/apiCaller';
 import _ from 'lodash';
 import { Wrapper, BodyWrapper } from 'styled';
 import { withRouter } from 'react-router-dom';
+import AvatarWrapper from 'components/Avatar';
+import { connect } from 'react-redux';
 
 class DriverProfile extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            avatar: '',
             user: {},
             cars: []
         };
@@ -34,53 +32,19 @@ class DriverProfile extends PureComponent {
     }
 
     render() {
-        const { user, cars,avatar } = this.state;
+        const { user, cars } = this.state;
+        const { auth } = this.props;
 
         return (
             <div className="container">
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
-                            <Avatar>
-                                <div className="text-center">
-                                    <UploadCustom
-                                        name="avatar"
-                                        listType="picture-card"
-                                        className={
-                                            avatar !== ''
-                                                ? 'avatar-uploader'
-                                                : 'avatar-uploader img-uploaded'
-                                        }
-                                    >
-                                        <img
-                                            className="avatar"
-                                            src={avatar}
-                                            alt="avatar"
-                                        />
-                                        <div className="btn-upload">
-                                            <Icon
-                                                type="upload"
-                                                style={{ fontSize: '24px' }}
-                                            />
-                                        </div>
-                                    </UploadCustom>
-                                    <h5 className="mb-0">{user.fullName}</h5>
-                                </div>
-                                <div className="mt-3 info fz-14">
-                                    <p className="mb-0">
-                                        <strong>Active day:</strong>{' '}
-                                        {moment(user.registerDate).format(
-                                            'DD/MM/YYYY'
-                                        )}
-                                    </p>
-                                    <p className="my-1">
-                                        <strong>Your rating:</strong>
-                                    </p>
-                                    <p className="mb-0">
-                                        <strong>Total booking trip:</strong>
-                                    </p>
-                                </div>
-                            </Avatar>
+                            <AvatarWrapper
+                                registerDate={user.registerDate}
+                                fullName={user.fullName}
+                                userType={auth.user.userType}
+                            />
                         </div>
                         <div className="col-9">
                             <Wrapper>
@@ -96,7 +60,9 @@ class DriverProfile extends PureComponent {
                                     <label className="col-sm-3">
                                         Full Name:
                                     </label>
-                                    <div className="col-sm-9">{user.fullName}</div>
+                                    <div className="col-sm-9">
+                                        {user.fullName}
+                                    </div>
                                 </div>
                                 <div className="form-group row">
                                     <label className="col-sm-3">
@@ -154,6 +120,14 @@ class DriverProfile extends PureComponent {
                                                     {car.carModel}
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-3">
+                                                    Car certificate:
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    {car.carCertificate}
+                                                </div>
+                                            </div>
                                         </div>
                                     );
                                 })}
@@ -165,4 +139,14 @@ class DriverProfile extends PureComponent {
         );
     }
 }
-export default withRouter(DriverProfile);
+
+const mapStateToProps = state => {
+    return {
+        auth: state.Authenticate
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    null
+)(withRouter(DriverProfile));
