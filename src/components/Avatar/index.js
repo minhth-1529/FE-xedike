@@ -1,8 +1,11 @@
 import React, { PureComponent } from 'react';
 import AvatarImg from 'assets/images/user-ic.png';
 import { Avatar, UploadCustom } from './styled';
-import { Icon } from 'antd';
+import { Icon, Rate } from 'antd';
 import moment from 'moment';
+import apiCaller from 'utils/apiCaller';
+import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 
 function getBase64(img, callback) {
     const reader = new FileReader();
@@ -16,30 +19,59 @@ class AvatarWrapper extends PureComponent {
 
         this.state = {
             isLoading: false,
-            imageUrl: ''
+            imageUrl: '',
+            rate: 0
         };
     }
 
-    handleInfo = (isMyProfile, userType) => {
+    handleInfo = (isMyProfile, userType, totalTrips = 0) => {
         if (isMyProfile && userType === 'driver') {
             return (
-                <p className="mb-0">
-                    <strong>Your rating:</strong>
-                </p>
+                <>
+                    <p className="mb-0">
+                        <strong>Your rating:</strong>
+                    </p>
+                    <Rate value={this.state.rate} disabled />
+                </>
             );
         } else if (isMyProfile && userType === 'passenger') {
             return (
                 <p className="mb-0">
-                    <strong>Total booking trip:</strong>
+                    <strong>Total booking trip: </strong>
+                    {totalTrips}
                 </p>
             );
         } else if (!isMyProfile) {
             return (
-                <p className="mb-0">
-                    <strong>Rating for driver:</strong>
-                </p>
+                <>
+                    <p className="mb-0">
+                        <strong>Rating for driver:</strong>
+                    </p>
+                    <Rate
+                        value={this.state.rate}
+                        onChange={this.handleRating}
+                        disabled={userType === 'driver' && true}
+                    />
+                </>
             );
         }
+    };
+
+    handleRating = value => {
+        const { match } = this.props;
+        const { id } = match.params;
+
+        this.setState({
+            rate: value
+        });
+
+        if (_.isEmpty(match.params)) return;
+
+        apiCaller(`users/rating/${id}`, 'PUT', { rate: value })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => console.log(err.response));
     };
 
     handleChange = info => {
@@ -58,13 +90,20 @@ class AvatarWrapper extends PureComponent {
         }
     };
 
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            rate: nextProps.rate
+        });
+    }
+
     render() {
         const {
             avatar,
             fullName,
             registerDate,
             isMyProfile,
-            userType
+            userType,
+            totalTrips
         } = this.props;
 
         return (
@@ -108,15 +147,15 @@ class AvatarWrapper extends PureComponent {
                     <h5 className="mb-0">{fullName}</h5>
                 </div>
                 <div className="mt-3 info fz-14">
-                    <p className="mb-0">
+                    <p className="mb-1">
                         <strong>Active day:</strong>{' '}
                         {moment(registerDate).format('DD/MM/YYYY')}
                     </p>
-                    {this.handleInfo(isMyProfile, userType)}
+                    {this.handleInfo(isMyProfile, userType, totalTrips)}
                 </div>
             </Avatar>
         );
     }
 }
 
-export default AvatarWrapper;
+export default withRouter(AvatarWrapper);

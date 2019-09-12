@@ -44,6 +44,7 @@ class DriverProfile extends PureComponent {
                                 registerDate={user.registerDate}
                                 fullName={user.fullName}
                                 userType={auth.user.userType}
+                                rate={user.rate}
                             />
                         </div>
                         <div className="col-9">

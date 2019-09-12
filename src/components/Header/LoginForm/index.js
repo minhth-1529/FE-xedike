@@ -1,13 +1,14 @@
 import React, { PureComponent } from 'react';
 import { ModalCustom } from '../styled';
-import { Form, Input, Button, Icon, Spin, notification } from 'antd';
-import * as Yup from 'yup';
-import { withFormik, Form as FormikForm, Field } from 'formik';
+import { Form, Button, Spin, notification } from 'antd';
+import { object, string } from 'yup';
+import { withFormik, Form as FormikForm } from 'formik';
 import apiCaller from 'utils/apiCaller';
 import { connect } from 'react-redux';
 import { authLogin } from 'services/Auth/actions.js';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
+import formInput from 'utils/formInput';
 
 const FormItem = Form.Item;
 
@@ -32,61 +33,22 @@ class LoginForm extends PureComponent {
             >
                 <Spin spinning={!errors && values.spinning} tip="Loading...">
                     <FormikForm onSubmit={handleSubmit}>
-                        <FormItem
-                            validateStatus={
-                                touched.email && errors.email && 'error'
-                            }
-                            help={touched.email && errors.email}
-                        >
-                            <label className="mb-0">Email</label>
-                            <Field
-                                name="email"
-                                render={({ field }) => (
-                                    <Input
-                                        disabled={values.disable}
-                                        type="email"
-                                        size="large"
-                                        placeholder="Enter your email..."
-                                        suffix={
-                                            <Icon
-                                                type="mail"
-                                                style={{
-                                                    color: 'rgba(0,0,0,.25)'
-                                                }}
-                                            />
-                                        }
-                                        {...field}
-                                    />
-                                )}
-                            />
-                        </FormItem>
-                        <FormItem
-                            validateStatus={
-                                touched.password && errors.password && 'error'
-                            }
-                            help={touched.password && errors.password}
-                        >
-                            <label className="mb-0">Password</label>
-                            <Field
-                                name="password"
-                                render={({ field }) => (
-                                    <Input
-                                        type="password"
-                                        size="large"
-                                        placeholder="Enter your password..."
-                                        suffix={
-                                            <Icon
-                                                type="lock"
-                                                style={{
-                                                    color: 'rgba(0,0,0,.25)'
-                                                }}
-                                            />
-                                        }
-                                        {...field}
-                                    />
-                                )}
-                            />
-                        </FormItem>
+                        {formInput(
+                            touched.email,
+                            errors.email,
+                            'email',
+                            'Email',
+                            'mail'
+                        )}
+                        {formInput(
+                            touched.password,
+                            errors.password,
+                            'password',
+                            'Password',
+                            'lock',
+                            'password'
+                        )}
+
                         <div className="input-group text-center mb-3 justify-content-center">
                             Are you member?
                             <span
@@ -121,11 +83,11 @@ const withFormikHOC = withFormik({
             spinning: false
         };
     },
-    validationSchema: Yup.object().shape({
-        email: Yup.string()
+    validationSchema: object().shape({
+        email: string()
             .required('Email is required')
             .email('Email is invalid'),
-        password: Yup.string()
+        password: string()
             .required('Password is required')
             .min(3, 'Password must have min 3 characters')
     }),
@@ -144,8 +106,10 @@ const withFormikHOC = withFormik({
                 notification.success({
                     message: 'Login successfully',
                     duration: 2.5,
-                    description: `Welcome ${jwtDecode(res.data.token).fullName}`,
-                    placement: 'topLeft',
+                    description: `Welcome ${
+                        jwtDecode(res.data.token).fullName
+                    }`,
+                    placement: 'topLeft'
                 });
             })
             .catch(err => {

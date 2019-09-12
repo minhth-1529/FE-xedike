@@ -14,17 +14,22 @@ class PasswordForm extends PureComponent {
             <Formik
                 initialValues={{
                     password: '',
-                    verifyPassword: '',
-                    newPassword: ''
+                    newPassword: '',
+                    verifyNewPassword: ''
                 }}
                 validationSchema={object().shape({
-                    password: string().required('Password is required').min(3, 'Password must have min 3 characters'),
-                    verifyPassword: string().required(
-                        'Verify password is required'
-                    ).oneOf([ref('password'), null], 'Passwords must match'),
+                    password: string()
+                        .required('Password is required')
+                        .min(3, 'Password must have min 3 characters'),
+                    verifyNewPassword: string()
+                        .required('Verify new password is required')
+                        .oneOf(
+                            [ref('verifyNewPassword'), null],
+                            'new password must match'
+                        ),
                     newPassword: string().required('New password is required')
                 })}
-                onSubmit={(values, { setFieldError }) => {
+                onSubmit={(values, { setFieldError, resetForm }) => {
                     apiCaller(`users/password/${id}`, 'PUT', values)
                         .then(() => {
                             notification.success({
@@ -32,6 +37,7 @@ class PasswordForm extends PureComponent {
                                 duration: 2.5,
                                 placement: 'topLeft'
                             });
+                            resetForm();
                         })
                         .catch(err => {
                             _.map(Object.keys(err.response.data), field => {
@@ -62,39 +68,7 @@ class PasswordForm extends PureComponent {
                                             <Input.Password
                                                 type="password"
                                                 size="large"
-                                                placeholder="Enter your password..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-3 text-right">
-                                <label className="mb-0 ant-form-item-required">
-                                    Verify password
-                                </label>
-                            </div>
-                            <div className="col-9">
-                                <FormItem
-                                    validateStatus={
-                                        touched.verifyPassword &&
-                                        errors.verifyPassword &&
-                                        'error'
-                                    }
-                                    help={
-                                        touched.verifyPassword &&
-                                        errors.verifyPassword
-                                    }
-                                >
-                                    <Field
-                                        name="verifyPassword"
-                                        render={({ field }) => (
-                                            <Input.Password
-                                                type="password"
-                                                size="large"
-                                                placeholder="Enter your password..."
+                                                placeholder="Enter password..."
                                                 {...field}
                                             />
                                         )}
@@ -126,7 +100,39 @@ class PasswordForm extends PureComponent {
                                             <Input.Password
                                                 type="password"
                                                 size="large"
-                                                placeholder="Enter your password..."
+                                                placeholder="Enter new password..."
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                </FormItem>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-3 text-right">
+                                <label className="mb-0 ant-form-item-required">
+                                    Verify new password
+                                </label>
+                            </div>
+                            <div className="col-9">
+                                <FormItem
+                                    validateStatus={
+                                        touched.verifyNewPassword &&
+                                        errors.verifyNewPassword &&
+                                        'error'
+                                    }
+                                    help={
+                                        touched.verifyNewPassword &&
+                                        errors.verifyNewPassword
+                                    }
+                                >
+                                    <Field
+                                        name="verifyNewPassword"
+                                        render={({ field }) => (
+                                            <Input.Password
+                                                type="password"
+                                                size="large"
+                                                placeholder="Enter verify new password..."
                                                 {...field}
                                             />
                                         )}

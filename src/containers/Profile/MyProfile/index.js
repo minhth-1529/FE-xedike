@@ -7,6 +7,7 @@ import PasswordForm from './PasswordForm';
 import _ from 'lodash';
 import { Wrapper, BodyWrapper } from 'styled';
 import AvatarWrapper from 'components/Avatar';
+import { getHistoryTrips } from 'services/Trip/actions.js';
 
 class MyProfile extends PureComponent {
     constructor(props) {
@@ -22,6 +23,8 @@ class MyProfile extends PureComponent {
 
         if (!auth.authenticate) return this.props.history.push('/');
 
+        this.props.getHistoryTrips();
+
         apiCaller(`users/${auth.user.id}`, 'GET', null)
             .then(res => {
                 // TODO update now fullName
@@ -35,18 +38,27 @@ class MyProfile extends PureComponent {
     }
 
     render() {
-        const { auth } = this.props;
+        const { auth, historyTrips } = this.props;
 
         const { user } = this.state;
 
         let emptyUser = _.isEmpty(user);
+
+        const totalTrips = historyTrips.length;
 
         return (
             <div className="container">
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
-                            <AvatarWrapper registerDate={user.registerDate} fullName={user.fullName} isMyProfile userType={auth.user.userType} />
+                            <AvatarWrapper
+                                registerDate={user.registerDate}
+                                fullName={user.fullName}
+                                isMyProfile
+                                userType={auth.user.userType}
+                                rate={user.rate}
+                                totalTrips={totalTrips}
+                            />
                         </div>
                         <div className="col-9">
                             <Wrapper>
@@ -79,11 +91,12 @@ class MyProfile extends PureComponent {
 
 const mapStateToProps = state => {
     return {
-        auth: state.Authenticate
+        auth: state.Authenticate,
+        historyTrips: state.Trips
     };
 };
 
 export default connect(
     mapStateToProps,
-    null
+    { getHistoryTrips }
 )(MyProfile);

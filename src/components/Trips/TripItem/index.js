@@ -1,13 +1,102 @@
 import React, { PureComponent } from 'react';
-import { Icon, Empty } from 'antd';
+import { Icon, Empty, Button, Rate } from 'antd';
 import _ from 'lodash';
 import { Price, Thumb } from './styled';
 import { Link } from 'react-router-dom';
+import swal from 'sweetalert';
+import swalReact from '@sweetalert/with-react';
+import apiCaller from 'utils/apiCaller';
 
 class TripItem extends PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            rate: 0
+        };
+    }
+
+    handleFinish = (tripID, driverID) => {
+        swal({
+            title: 'Would you like to rating for driver?',
+            icon: 'info',
+            buttons: {
+                close: {
+                    text: 'No thanks!',
+                    className: 'ant-btn ant-btn-danger',
+                    value: 'close'
+                },
+                rate: {
+                    text: 'Rate now',
+                    value: 'rate',
+                    className: 'ant-btn ant-btn-primary'
+                }
+            }
+        })
+            .then(value => {
+                if (value !== 'rate') {
+                    return apiCaller(`trips/finish-trip/${tripID}`, 'PUT', null)
+                        .then(() => {
+                            swal({
+                                title: 'Finish trip successfully!',
+                                text: '',
+                                icon: 'success',
+                                timer: 2000
+                            });
+                        })
+                        .catch(err => console.log(err.response));
+                }
+
+                return swalReact(<Rate onChange={this.handleRating} />, {
+                    buttons: {
+                        close: {
+                            text: 'Cancel',
+                            className: 'ant-btn ant-btn-danger',
+                            value: 'close'
+                        },
+                        submit: {
+                            text: 'Submit',
+                            className: 'ant-btn ant-btn-primary',
+                            value: 'submit'
+                        }
+                    }
+                });
+            })
+            .then(value => {
+                if (value !== 'submit') {
+                    return apiCaller(`trips/finish-trip/${tripID}`, 'PUT', null)
+                        .then(() => {
+                            swal({
+                                title: 'Finish trip successfully!',
+                                icon: 'success',
+                                timer: 2000
+                            });
+                        })
+                        .catch(err => console.log(err.response));
+                }
+
+                apiCaller(`users/rating/${driverID}`, 'PUT', {
+                    rate: this.state.rate
+                })
+                    .then(() => {
+                        swal({
+                            title: 'Finish trip and Rating successfully!',
+                            icon: 'success',
+                            timer: 2000
+                        });
+                    })
+                    .catch(err => console.log(err.response));
+            });
+    };
+
+    handleRating = value => {
+        this.setState({
+            rate: value
+        });
+    };
+
     render() {
         const { trips = [], priceFont, large, showBtn = true } = this.props;
-        console.log("TCL: TripItem -> render -> showBtn", showBtn)
         const isEmpty = _.isEmpty(trips);
 
         return (
@@ -81,8 +170,8 @@ class TripItem extends PureComponent {
                                     >
                                         {item.fee} <sup>vnd</sup>
                                     </Price>
-                                    {showBtn && (
-                                        <div className="flex-grow-0">
+                                    <div className="flex-grow-0">
+                                        {showBtn ? (
                                             <Link
                                                 to={`/booking-trip/${item._id}`}
                                                 className={`btn btn-success ${large &&
@@ -90,8 +179,21 @@ class TripItem extends PureComponent {
                                             >
                                                 Book now
                                             </Link>
-                                        </div>
-                                    )}
+                                        ) : (
+                                            <Button
+                                                onClick={() =>
+                                                    this.handleFinish(
+                                                        item._id,
+                                                        item.driverID._id
+                                                    )
+                                                }
+                                                type="primary"
+                                                disabled={item.isFinished && true}
+                                            >
+                                                Finish trip
+                                            </Button>
+                                        )}
+                                    </div>
                                 </li>
                             );
                         })}

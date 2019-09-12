@@ -8,7 +8,7 @@ import RegisterForm from './RegisterForm';
 import AddCarForm from './AddCarForm';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Avatar, Menu, Dropdown } from 'antd';
+import { Avatar, Menu, Dropdown, Icon } from 'antd';
 import { authLogout } from 'services/Auth/actions.js';
 
 class Header extends PureComponent {
@@ -22,7 +22,7 @@ class Header extends PureComponent {
 
     addCarModal = value => {
         this.setState({
-            addCarVisible: value,
+            addCarVisible: value
         });
     };
 
@@ -49,9 +49,11 @@ class Header extends PureComponent {
                 <Menu.Item>
                     <Link to="/my-profile">Personal info</Link>
                 </Menu.Item>
-                <Menu.Item>
-                    <Link to="/history-trips">History trips</Link>
-                </Menu.Item>
+                {auth.user.userType !== 'driver' && (
+                    <Menu.Item>
+                        <Link to="/history-trips">History trips</Link>
+                    </Menu.Item>
+                )}
                 <Menu.Item>
                     <a
                         onClick={() => {
@@ -74,7 +76,7 @@ class Header extends PureComponent {
                     <Collapse navbar>
                         <Nav className="ml-auto align-items-center" navbar>
                             <NavItem className="mr-3">
-                                <Link to="/trips/search" className="text-white">
+                                <Link to="/trips/search" className="text-white login-link">
                                     Trip
                                 </Link>
                             </NavItem>
@@ -116,20 +118,38 @@ class Header extends PureComponent {
                             ) : (
                                 <>
                                     {auth.user.userType === 'driver' && (
-                                        <NavItem className="mr-3">
-                                            <p
-                                                className="login-link text-white cursor-point mb-0"
-                                                onClick={() =>
-                                                    this.addCarModal(true)
-                                                }
-                                            >
-                                                Add car
-                                            </p>
-                                            <AddCarForm
-                                                addCarModal={this.addCarModal}
-                                                addCarVisible={addCarVisible}
-                                            />
-                                        </NavItem>
+                                        <>
+                                            <NavItem className="mr-3">
+                                                <p
+                                                    className="login-link text-white cursor-point mb-0"
+                                                    onClick={() =>
+                                                        this.addCarModal(true)
+                                                    }
+                                                >
+                                                    Add car
+                                                </p>
+                                                <AddCarForm
+                                                    addCarModal={
+                                                        this.addCarModal
+                                                    }
+                                                    addCarVisible={
+                                                        addCarVisible
+                                                    }
+                                                />
+                                            </NavItem>
+                                            <NavItem className="mr-3">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-warning btn-sm d-flex align-items-center"
+                                                    onClick={() =>
+                                                        this.registerModal(true)
+                                                    }
+                                                >
+                                                    <Icon type="car" className="mr-1" />
+                                                    Create trip
+                                                </button>
+                                            </NavItem>
+                                        </>
                                     )}
                                     <NavItem>
                                         <Dropdown overlay={menu}>

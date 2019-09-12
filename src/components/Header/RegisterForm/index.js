@@ -1,13 +1,14 @@
 import React, { PureComponent } from 'react';
 import { ModalCustom } from '../styled';
-import * as Yup from 'yup';
+import { object, string, ref } from 'yup';
 import { withFormik, Form as FormikForm, Field } from 'formik';
-import { Form, Input, Button, Icon, DatePicker } from 'antd';
+import { Form, Button, DatePicker } from 'antd';
 import { UserType } from './styled';
 import Driver from 'assets/images/signup_driver.png';
 import Passenger from 'assets/images/signup_passenger.png';
 import { toast, ToastContainer } from 'react-toastify';
 import apiCaller from 'utils/apiCaller';
+import formInput from 'utils/formInput';
 
 const FormItem = Form.Item;
 
@@ -53,142 +54,52 @@ class RegisterForm extends PureComponent {
                 onCancel={() => registerModal(false)}
             >
                 <FormikForm onSubmit={handleSubmit}>
-                    <FormItem
-                        validateStatus={
-                            touched.email && errors.email && 'error'
-                        }
-                        help={touched.email && errors.email}
-                    >
-                        <label className="mb-0">Email</label>
-                        <Field
-                            name="email"
-                            render={({ field }) => (
-                                <Input
-                                    suffix={
-                                        <Icon
-                                            type="mail"
-                                            style={{
-                                                color: 'rgba(0,0,0,.25)'
-                                            }}
-                                        />
-                                    }
-                                    type="email"
-                                    size="large"
-                                    placeholder="Enter your email..."
-                                    {...field}
-                                />
-                            )}
-                        />
-                    </FormItem>
-                    <FormItem
-                        validateStatus={
-                            touched.fullName && errors.fullName && 'error'
-                        }
-                        help={touched.fullName && errors.fullName}
-                    >
-                        <label className="mb-0">Full name</label>
-                        <Field
-                            name="fullName"
-                            render={({ field }) => (
-                                <Input
-                                    suffix={
-                                        <Icon
-                                            type="user"
-                                            style={{
-                                                color: 'rgba(0,0,0,.25)'
-                                            }}
-                                        />
-                                    }
-                                    type="text"
-                                    size="large"
-                                    placeholder="Enter your full name..."
-                                    {...field}
-                                />
-                            )}
-                        />
-                    </FormItem>
+                    {formInput(
+                        touched.email,
+                        errors.email,
+                        'email',
+                        'Email',
+                        'mail'
+                    )}
+
+                    {formInput(
+                        touched.fullName,
+                        errors.fullName,
+                        'fullName',
+                        'Full name',
+                        'user'
+                    )}
                     <div className="row">
                         <div className="col-6">
-                            <FormItem
-                                validateStatus={
-                                    touched.password &&
-                                    errors.password &&
-                                    'error'
-                                }
-                                help={touched.password && errors.password}
-                            >
-                                <label className="mb-0">Password</label>
-                                <Field
-                                    name="password"
-                                    render={({ field }) => (
-                                        <Input.Password
-                                            type="password"
-                                            size="large"
-                                            placeholder="Enter your password..."
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                            </FormItem>
+                            {formInput(
+                                touched.password,
+                                errors.password,
+                                'password',
+                                'Password',
+                                'lock',
+                                'password'
+                            )}
                         </div>
                         <div className="col-6">
-                            <FormItem
-                                validateStatus={
-                                    touched.verifyPassword &&
-                                    errors.verifyPassword &&
-                                    'error'
-                                }
-                                help={
-                                    touched.verifyPassword &&
-                                    errors.verifyPassword
-                                }
-                            >
-                                <label className="mb-0">Verify password</label>
-                                <Field
-                                    name="verifyPassword"
-                                    render={({ field }) => (
-                                        <Input.Password
-                                            type="password"
-                                            size="large"
-                                            placeholder="Verify password..."
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                            </FormItem>
+                            {formInput(
+                                touched.verifyPassword,
+                                errors.verifyPassword,
+                                'verifyPassword',
+                                'Verify password',
+                                'lock',
+                                'password'
+                            )}
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-6">
-                            <FormItem
-                                validateStatus={
-                                    touched.phoneNumber &&
-                                    errors.phoneNumber &&
-                                    'error'
-                                }
-                                help={touched.phoneNumber && errors.phoneNumber}
-                            >
-                                <label className="mb-0">Phone number</label>
-                                <Field
-                                    name="phoneNumber"
-                                    render={({ field }) => (
-                                        <Input
-                                            suffix={
-                                                <Icon
-                                                    type="phone"
-                                                    style={{
-                                                        color: 'rgba(0,0,0,.25)'
-                                                    }}
-                                                />
-                                            }
-                                            type="text"
-                                            size="large"
-                                            placeholder="Enter your phone number..."
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                            </FormItem>
+                            {formInput(
+                                touched.phoneNumber,
+                                errors.phoneNumber,
+                                'phoneNumber',
+                                'Phone number',
+                                'phone'
+                            )}
                         </div>
                         <div className="col-6">
                             <FormItem
@@ -315,20 +226,20 @@ const withFormikHOC = withFormik({
             userType: ''
         };
     },
-    validationSchema: Yup.object().shape({
-        email: Yup.string()
+    validationSchema: object().shape({
+        email: string()
             .required('Email is required')
             .email('Email is invalid'),
-        fullName: Yup.string().required('Full name is required'),
-        password: Yup.string()
+        fullName: string().required('Full name is required'),
+        password: string()
             .required('Password is required')
             .min(3, 'Password must have min 3 characters'),
-        verifyPassword: Yup.string()
+        verifyPassword: string()
             .required('Verify password is required')
-            .oneOf([Yup.ref('password'), null], 'Passwords must match'),
-        phoneNumber: Yup.string().required('Phone number is required'),
-        DOB: Yup.string().required('Day of birth is required'),
-        userType: Yup.string().required('User type is required')
+            .oneOf([ref('password'), null], 'Passwords must match'),
+        phoneNumber: string().required('Phone number is required'),
+        DOB: string().required('Day of birth is required'),
+        userType: string().required('User type is required')
     }),
     handleSubmit: (values, { resetForm, props, setFieldError }) => {
         apiCaller('users', 'POST', values)

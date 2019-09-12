@@ -15,7 +15,7 @@ const Footer = () => {
                     <ul className="clearfix">
                         <li>
                             <a href="https://www.linkedin.com/in/minh-tr%E1%BA%A7n-481b62146/">
-                                Linkedin
+                                LinkedIn
                             </a>
                         </li>
                         <li>

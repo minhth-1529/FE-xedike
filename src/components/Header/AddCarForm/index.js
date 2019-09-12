@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 import { ModalCustom } from '../styled';
-import { Form, Input, Button, InputNumber, Spin } from 'antd';
-import * as Yup from 'yup';
-import { withFormik, Form as FormikForm, Field } from 'formik';
+import { Form, Button, InputNumber, Spin } from 'antd';
+import { object, string } from 'yup';
+import { withFormik, Form as FormikForm } from 'formik';
 import apiCaller from 'utils/apiCaller';
 import { connect } from 'react-redux';
 import { authLogin } from 'services/Auth/actions.js';
+import formInput from 'utils/formInput';
 
 const FormItem = Form.Item;
 
@@ -32,77 +33,33 @@ class AddCarForm extends PureComponent {
                     <FormikForm onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-6">
-                                <FormItem
-                                    validateStatus={
-                                        touched.carName &&
-                                        errors.carName &&
-                                        'error'
-                                    }
-                                    help={touched.carName && errors.carName}
-                                >
-                                    <label className="mb-0">Car name</label>
-                                    <Field
-                                        name="carName"
-                                        render={({ field }) => (
-                                            <Input
-                                                type="text"
-                                                size="large"
-                                                placeholder="Enter your car name..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
+                                {formInput(
+                                    touched.carName,
+                                    errors.carName,
+                                    'carName',
+                                    'Car name',
+                                    ''
+                                )}
                             </div>
                             <div className="col-6">
-                                <FormItem
-                                    validateStatus={
-                                        touched.carModel &&
-                                        errors.carModel &&
-                                        'error'
-                                    }
-                                    help={touched.carModel && errors.carModel}
-                                >
-                                    <label className="mb-0">Car model</label>
-                                    <Field
-                                        name="carModel"
-                                        render={({ field }) => (
-                                            <Input
-                                                type="text"
-                                                size="large"
-                                                placeholder="Enter your car model..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
+                                {formInput(
+                                    touched.carModel,
+                                    errors.carModel,
+                                    'carModel',
+                                    'Car model',
+                                    ''
+                                )}
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-6">
-                                <FormItem
-                                    validateStatus={
-                                        touched.autoMakers &&
-                                        errors.autoMakers &&
-                                        'error'
-                                    }
-                                    help={
-                                        touched.autoMakers && errors.autoMakers
-                                    }
-                                >
-                                    <label className="mb-0">Automakers</label>
-                                    <Field
-                                        name="autoMakers"
-                                        render={({ field }) => (
-                                            <Input
-                                                type="text"
-                                                size="large"
-                                                placeholder="Enter your automakers..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
+                                {formInput(
+                                    touched.autoMakers,
+                                    errors.autoMakers,
+                                    'autoMakers',
+                                    'Automakers',
+                                    ''
+                                )}
                             </div>
                             <div className="col-6">
                                 <FormItem
@@ -133,32 +90,13 @@ class AddCarForm extends PureComponent {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                <FormItem
-                                    validateStatus={
-                                        touched.carCertificate &&
-                                        errors.carCertificate &&
-                                        'error'
-                                    }
-                                    help={
-                                        touched.carCertificate &&
-                                        errors.carCertificate
-                                    }
-                                >
-                                    <label className="mb-0">
-                                        Car certificate
-                                    </label>
-                                    <Field
-                                        name="carCertificate"
-                                        render={({ field }) => (
-                                            <Input
-                                                type="text"
-                                                size="large"
-                                                placeholder="Enter your car certificate..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
+                                {formInput(
+                                    touched.carCertificate,
+                                    errors.carCertificate,
+                                    'carCertificate',
+                                    'Car certificate',
+                                    ''
+                                )}
                             </div>
                         </div>
                         <div className="input-group">
@@ -188,11 +126,11 @@ const withFormikHOC = withFormik({
             carCertificate: ''
         };
     },
-    validationSchema: Yup.object().shape({
-        carModel: Yup.string().required('This field is required'),
-        carName: Yup.string().required('This field is required'),
-        autoMakers: Yup.string().required('This field is required'),
-        carCertificate: Yup.string().required('This field is required')
+    validationSchema: object().shape({
+        carModel: string().required('This field is required'),
+        carName: string().required('This field is required'),
+        autoMakers: string().required('This field is required'),
+        carCertificate: string().required('This field is required')
     }),
     handleSubmit: values => {
         apiCaller('cars', 'POST', values)
