@@ -7,6 +7,7 @@ import apiCaller from 'utils/apiCaller';
 import { connect } from 'react-redux';
 import { authLogin } from 'services/Auth/actions.js';
 import formInput from 'utils/formInput';
+import swal from 'sweetalert';
 
 const FormItem = Form.Item;
 
@@ -132,10 +133,18 @@ const withFormikHOC = withFormik({
         autoMakers: string().required('This field is required'),
         carCertificate: string().required('This field is required')
     }),
-    handleSubmit: values => {
+    handleSubmit: (values, { resetForm, props }) => {
         apiCaller('cars', 'POST', values)
-            .then(res => {
-                console.log(res);
+            .then(() => {
+                swal({
+                    text: 'Add car successfully!',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 1500
+                }).then(() => {
+                    resetForm();
+                    props.addCarModal(false)
+                });
             })
             .catch(err => console.log(err.response));
     }

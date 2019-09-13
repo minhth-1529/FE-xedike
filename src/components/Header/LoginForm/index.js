@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { ModalCustom } from '../styled';
-import { Form, Button, Spin, notification } from 'antd';
+import { Button, Spin, notification } from 'antd';
 import { object, string } from 'yup';
 import { withFormik, Form as FormikForm } from 'formik';
 import apiCaller from 'utils/apiCaller';
@@ -9,8 +9,6 @@ import { authLogin } from 'services/Auth/actions.js';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import formInput from 'utils/formInput';
-
-const FormItem = Form.Item;
 
 class LoginForm extends PureComponent {
     render() {

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Modal } from 'antd';
+import { Modal, InputNumber, DatePicker } from 'antd';
 
 export const HeaderContainer = styled.header`
     background-color: ${props => props.theme.headerColor};
@@ -22,3 +22,12 @@ export const ModalCustom = styled(Modal)`
         display: none;
     }
 `;
+
+export const InputNumberCustom = styled(InputNumber)`
+    display: block !important;
+    width: 100% !important;
+`;
+
+export const DatePickerCustom = styled(DatePicker)`
+    display: block !important;
+`

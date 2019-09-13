@@ -29,6 +29,10 @@ img {
     flex-grow: 2 !important;
 }
 
+.flex-basic-25{
+    flex-basis: 25%;
+}
+
 ul {
     margin: 0 !important;
     padding: 0;

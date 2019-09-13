@@ -5,6 +5,7 @@ import { HeaderContainer } from './styled';
 import { FaUserPlus } from 'react-icons/fa';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import CreateTrip from './CreateTrip';
 import AddCarForm from './AddCarForm';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -16,7 +17,8 @@ class Header extends PureComponent {
         super(props);
         this.state = {
             signInVisible: false,
-            registerVisible: false
+            registerVisible: false,
+            createVisible: false
         };
     }
 
@@ -40,8 +42,14 @@ class Header extends PureComponent {
         });
     };
 
+    createModal = value => {
+        this.setState({
+            createVisible: value
+        });
+    };
+
     render() {
-        const { signInVisible, registerVisible, addCarVisible } = this.state;
+        const { signInVisible, registerVisible, addCarVisible, createVisible } = this.state;
         const { auth } = this.props;
 
         const menu = (
@@ -55,14 +63,9 @@ class Header extends PureComponent {
                     </Menu.Item>
                 )}
                 <Menu.Item>
-                    <a
-                        onClick={() => {
-                            this.props.authLogout();
-                            this.props.history.push('/');
-                        }}
-                    >
+                    <Link to="/" onClick={() => this.props.authLogout()}>
                         Logout
-                    </a>
+                    </Link>
                 </Menu.Item>
             </Menu>
         );
@@ -76,7 +79,10 @@ class Header extends PureComponent {
                     <Collapse navbar>
                         <Nav className="ml-auto align-items-center" navbar>
                             <NavItem className="mr-3">
-                                <Link to="/trips/search" className="text-white login-link">
+                                <Link
+                                    to="/trips/search"
+                                    className="text-white login-link"
+                                >
                                     Trip
                                 </Link>
                             </NavItem>
@@ -142,12 +148,21 @@ class Header extends PureComponent {
                                                     type="button"
                                                     className="btn btn-warning btn-sm d-flex align-items-center"
                                                     onClick={() =>
-                                                        this.registerModal(true)
+                                                        this.createModal(true)
                                                     }
                                                 >
-                                                    <Icon type="car" className="mr-1" />
+                                                    <Icon
+                                                        type="car"
+                                                        className="mr-1"
+                                                    />
                                                     Create trip
                                                 </button>
+                                                <CreateTrip
+                                                    createVisible={
+                                                        createVisible
+                                                    }
+                                                    createModal={this.createModal}
+                                                />
                                             </NavItem>
                                         </>
                                     )}

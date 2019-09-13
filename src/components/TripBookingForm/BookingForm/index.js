@@ -135,7 +135,7 @@ class BookingForm extends Component {
                                         name="locationFrom"
                                         size="large"
                                         showSearch
-                                        placeholder="Enter location"
+                                        placeholder="Select location"
                                         optionFilterProp="children"
                                         value={values.locationFrom}
                                         onChange={value =>
@@ -183,7 +183,7 @@ class BookingForm extends Component {
                                         size="large"
                                         showSearch
                                         value={values.locationTo}
-                                        placeholder="Enter location"
+                                        placeholder="Select location"
                                         optionFilterProp="children"
                                         onChange={value =>
                                             setFieldValue('locationTo', value)

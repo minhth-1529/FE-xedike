@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Icon, Empty, Button, Rate } from 'antd';
+import { Empty, Button, Rate } from 'antd';
 import _ from 'lodash';
 import { Price, Thumb } from './styled';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import swalReact from '@sweetalert/with-react';
 import apiCaller from 'utils/apiCaller';
-
+import { FaArrowRight, FaCalendarAlt, FaUsers, FaStar } from 'react-icons/fa';
 class TripItem extends PureComponent {
     constructor(props) {
         super(props);
@@ -113,18 +113,14 @@ class TripItem extends PureComponent {
                                     }
                                     key={index}
                                 >
-                                    <div className="flex-grow-2">
+                                    <div className="flex-basic-25">
                                         <div className="d-flex align-items-center mb-1">
                                             {item.locationFrom}
-                                            <Icon
-                                                type="arrow-right"
-                                                className="mx-2"
-                                            />
+                                            <FaArrowRight className="mx-2" />
                                             {item.locationTo}
                                         </div>
                                         <div className="d-flex align-items-center">
-                                            <Icon
-                                                type="calendar"
+                                            <FaCalendarAlt
                                                 className="mr-1"
                                             />
                                             2/2/1993
@@ -133,8 +129,7 @@ class TripItem extends PureComponent {
                                     <div className="flex-grow-1">
                                         <div className="mb-1">Honda</div>
                                         <div className="d-flex align-items-center">
-                                            <Icon
-                                                type="team"
+                                            <FaUsers
                                                 className="mr-1"
                                             />
                                             {item.availableSeats}
@@ -154,13 +149,11 @@ class TripItem extends PureComponent {
                                                 {item.driverID.fullName}
                                             </p>
                                             <div className="d-flex align-items-center">
-                                                <Icon
-                                                    type="star"
-                                                    theme="twoTone"
+                                                <FaStar
                                                     className="mr-1"
-                                                    twoToneColor="#ffc107"
+                                                    style={{color: '#ffc107'}}
                                                 />
-                                                4
+                                                {item.driverID.rate}
                                             </div>
                                         </div>
                                     </Link>
@@ -188,7 +181,9 @@ class TripItem extends PureComponent {
                                                     )
                                                 }
                                                 type="primary"
-                                                disabled={item.isFinished && true}
+                                                disabled={
+                                                    item.isFinished && true
+                                                }
                                             >
                                                 Finish trip
                                             </Button>
