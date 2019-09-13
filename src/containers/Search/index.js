@@ -6,9 +6,14 @@ import BookingForm from 'components/TripBookingForm/BookingForm';
 import { BodyWrapper } from 'styled';
 import { getTrips } from 'services/Trip/actions';
 import { connect } from 'react-redux';
-
+import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 class Trips extends PureComponent {
     componentDidMount() {
+        const { location } = this.props;
+
+        if (!_.isEmpty(location.search)) return;
+
         this.props.getTrips();
     }
 
@@ -51,4 +56,4 @@ const mapStateToProps = state => {
 export default connect(
     mapStateToProps,
     { getTrips }
-)(Trips);
+)(withRouter(Trips));

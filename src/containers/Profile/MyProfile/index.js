@@ -1,33 +1,33 @@
 import React, { PureComponent } from 'react';
 import { Icon } from 'antd';
-import { connect } from 'react-redux';
 import apiCaller from 'utils/apiCaller';
-import PersonalForm from './PersonalForm';
-import PasswordForm from './PasswordForm';
 import _ from 'lodash';
 import { Wrapper, BodyWrapper } from 'styled';
+import { withRouter } from 'react-router-dom';
 import AvatarWrapper from 'components/Avatar';
-import { getHistoryTrips } from 'services/Trip/actions.js';
+import { connect } from 'react-redux';
 
 class MyProfile extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            user: {}
+            user: {},
+            cars: []
         };
     }
 
     componentDidMount() {
-        const { auth } = this.props;
+        const { match, auth } = this.props;
 
-        if (!auth.authenticate) return this.props.history.push('/');
+        let userId = match.params.id;
 
-        this.props.getHistoryTrips();
+        if (_.isEmpty(match.params)){
+            userId = auth.user.id
+        }
 
-        apiCaller(`users/${auth.user.id}`, 'GET', null)
+        apiCaller(`users/${userId}`, 'GET', null)
             .then(res => {
-                // TODO update now fullName
                 _.map(Object.keys(res.data), item => {
                     this.setState({
                         [item]: res.data[item]
@@ -38,13 +38,8 @@ class MyProfile extends PureComponent {
     }
 
     render() {
-        const { auth, historyTrips } = this.props;
-
-        const { user } = this.state;
-
-        let emptyUser = _.isEmpty(user);
-
-        const totalTrips = historyTrips.length;
+        const { user, cars } = this.state;
+        const { auth } = this.props;
 
         return (
             <div className="container">
@@ -54,32 +49,95 @@ class MyProfile extends PureComponent {
                             <AvatarWrapper
                                 registerDate={user.registerDate}
                                 fullName={user.fullName}
-                                isMyProfile
                                 userType={auth.user.userType}
                                 rate={user.rate}
-                                totalTrips={totalTrips}
                             />
                         </div>
                         <div className="col-9">
                             <Wrapper>
                                 <h5 className="font-weight-normal d-flex align-items-center mb-4">
                                     <Icon type="user" className="mr-1" />
-                                    Personal information
+                                    Driver information
                                 </h5>
-                                {!emptyUser && (
-                                    <PersonalForm
-                                        email={user.email}
-                                        fullName={user.fullName}
-                                        DOB={user.DOB}
-                                        phoneNumber={user.phoneNumber}
-                                        id={auth.user.id}
-                                    />
-                                )}
-                                <h5 className="font-weight-normal d-flex align-items-center mb-4 mt-5">
-                                    <Icon type="lock" className="mr-1" /> Change
-                                    password
-                                </h5>
-                                <PasswordForm id={auth.user.id} />
+                                <div className="form-group row">
+                                    <label className="col-sm-3">Email:</label>
+                                    <div className="col-sm-9">{user.email}</div>
+                                </div>
+                                <div className="form-group row">
+                                    <label className="col-sm-3">
+                                        Full Name:
+                                    </label>
+                                    <div className="col-sm-9">
+                                        {user.fullName}
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label className="col-sm-3">
+                                        Day of birth:
+                                    </label>
+                                    <div className="col-sm-9">{user.DOB}</div>
+                                </div>
+                                <div className="form-group row">
+                                    <label className="col-sm-3">
+                                        Phone number:
+                                    </label>
+                                    <div className="col-sm-9">
+                                        {user.phoneNumber}
+                                    </div>
+                                </div>
+                                {_.map(cars, (car, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <h5 className="font-weight-normal d-flex align-items-center mb-4 mt-5">
+                                                <Icon
+                                                    type="car"
+                                                    className="mr-1"
+                                                />{' '}
+                                                Car information
+                                            </h5>
+                                            <div className="form-group row">
+                                                <label className="col-sm-3">
+                                                    Carmakers:
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    {car.autoMakers}
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-3">
+                                                    Car Name:
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    {car.carName}
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-3">
+                                                    Car seats:
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    {car.carSeats}
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-3">
+                                                    Car model:
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    {car.carModel}
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-3">
+                                                    Car certificate:
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    {car.carCertificate}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </Wrapper>
                         </div>
                     </div>
@@ -91,12 +149,11 @@ class MyProfile extends PureComponent {
 
 const mapStateToProps = state => {
     return {
-        auth: state.Authenticate,
-        historyTrips: state.Trips
+        auth: state.Authenticate
     };
 };
 
 export default connect(
     mapStateToProps,
-    { getHistoryTrips }
-)(MyProfile);
+    null
+)(withRouter(MyProfile));

@@ -55,11 +55,15 @@ class Header extends PureComponent {
         const menu = (
             <Menu>
                 <Menu.Item>
-                    <Link to="/my-profile">Personal info</Link>
+                    <Link to="/edit-profile">Edit profile</Link>
                 </Menu.Item>
-                {auth.user.userType !== 'driver' && (
+                {auth.user.userType !== 'driver' ? (
                     <Menu.Item>
                         <Link to="/history-trips">History trips</Link>
+                    </Menu.Item>
+                ) : (
+                    <Menu.Item>
+                        <Link to="/my-profile">My profile</Link>
                     </Menu.Item>
                 )}
                 <Menu.Item>

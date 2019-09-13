@@ -41,6 +41,15 @@ class AvatarWrapper extends PureComponent {
                     {totalTrips}
                 </p>
             );
+        } else if (!isMyProfile && userType === 'driver') {
+            return (
+                <>
+                    <p className="mb-0">
+                        <strong>Your rating:</strong>
+                    </p>
+                    <Rate value={this.state.rate} disabled />
+                </>
+            );
         } else if (!isMyProfile) {
             return (
                 <>

@@ -6,9 +6,9 @@ import { Form, Button, DatePicker } from 'antd';
 import { UserType } from './styled';
 import Driver from 'assets/images/signup_driver.png';
 import Passenger from 'assets/images/signup_passenger.png';
-import { toast, ToastContainer } from 'react-toastify';
 import apiCaller from 'utils/apiCaller';
 import formInput from 'utils/formInput';
+import swal from 'sweetalert';
 
 const FormItem = Form.Item;
 
@@ -208,7 +208,6 @@ class RegisterForm extends PureComponent {
                         </Button>
                     </div>
                 </FormikForm>
-                <ToastContainer autoClose={2000} />
             </ModalCustom>
         );
     }
@@ -244,17 +243,23 @@ const withFormikHOC = withFormik({
     handleSubmit: (values, { resetForm, props, setFieldError }) => {
         apiCaller('users', 'POST', values)
             .then(res => {
-                if (res.status === 200) {
-                    toast.success(res.data.statusText, {
-                        onClose: () => {
-                            resetForm();
-                            props.registerModal(false);
-                        }
-                    });
-                }
+                swal({
+                    text: res.data.statusText,
+                    icon: 'success',
+                    buttons: false,
+                    timer: 1500
+                }).then(() => {
+                    resetForm();
+                    props.registerModal(false);
+                });
             })
             .catch(err => {
-                toast.error('Some error has occurred');
+                swal({
+                    text: 'Some error has occurred!',
+                    icon: 'error',
+                    buttons: false,
+                    timer: 1500
+                })
                 setFieldError('email', err.response.data.email);
                 setFieldError('phoneNumber', err.response.data.phoneNumber);
             });

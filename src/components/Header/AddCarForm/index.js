@@ -143,7 +143,7 @@ const withFormikHOC = withFormik({
                     timer: 1500
                 }).then(() => {
                     resetForm();
-                    props.addCarModal(false)
+                    props.addCarModal(false);
                 });
             })
             .catch(err => console.log(err.response));

@@ -6,7 +6,7 @@ import { object, string } from 'yup';
 import _ from 'lodash';
 import queryString from 'query-string';
 import apiCaller from 'utils/apiCaller';
-import { toast, ToastContainer } from 'react-toastify';
+import swal from 'sweetalert';
 import { connect } from 'react-redux';
 import { searchTrips } from 'services/Trip/actions.js';
 import { withRouter } from 'react-router-dom';
@@ -39,8 +39,10 @@ class BookingForm extends Component {
 
         if (this.props.atHome) return;
 
-        const { location } = this.props;
+        const { location, searchTrips } = this.props;
         const stringObject = queryString.parse(location.search);
+
+        if (_.isEmpty(location.search)) return;
 
         this.setState({
             locationFrom: stringObject.from,
@@ -48,6 +50,20 @@ class BookingForm extends Component {
             startTime: moment(stringObject.startTime),
             slot: stringObject.slot
         });
+
+        apiCaller(`trips/search${location.search}`, 'POST', null)
+            .then(res => {
+                searchTrips(res.data);
+            })
+            .catch(err => {
+                swal({
+                    text: err.response.data.message,
+                    icon: 'error',
+                    buttons: false,
+                    timer: 2000
+                });
+                searchTrips([]);
+            });
     }
 
     render() {
@@ -91,7 +107,12 @@ class BookingForm extends Component {
                                 searchTrips(res.data);
                             })
                             .catch(err => {
-                                toast.error(err.response.data.message);
+                                swal({
+                                    text: err.response.data.message,
+                                    icon: 'error',
+                                    buttons: false,
+                                    timer: 2000
+                                });
                                 searchTrips([]);
                             });
                     }
@@ -103,7 +124,10 @@ class BookingForm extends Component {
                     errors,
                     handleSubmit
                 }) => (
-                    <form className="trip-booking__form" onSubmit={handleSubmit}>
+                    <form
+                        className="trip-booking__form"
+                        onSubmit={handleSubmit}
+                    >
                         <Row type={atHome && 'flex'} align="bottom">
                             <Col
                                 className={atHome && 'px-1'}
@@ -267,7 +291,6 @@ class BookingForm extends Component {
                                         max={10}
                                         defaultValue={2}
                                         size="large"
-                                        // value={values.slot}
                                         name="slot"
                                         onChange={value =>
                                             setFieldValue('slot', value)
@@ -302,7 +325,6 @@ class BookingForm extends Component {
                                 )}
                             </Col>
                         </Row>
-                        <ToastContainer autoClose={2000} />
                     </form>
                 )}
             />
