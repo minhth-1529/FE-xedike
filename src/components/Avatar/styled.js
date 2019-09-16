@@ -49,7 +49,7 @@ export const UploadCustom = styled(Upload)`
         display: flex;
         align-items: center;
         justify-content: center;
-        opacity: 0;
+        opacity: ${props => props.loading ? 1 : 0};
         transition: opacity 0.2s ease-in-out;
     }
 `;

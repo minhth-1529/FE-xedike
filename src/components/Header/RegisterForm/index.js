@@ -114,8 +114,10 @@ class RegisterForm extends PureComponent {
                                     size="large"
                                     className="d-block"
                                     name="DOB"
-                                    onChange={value =>
-                                        setFieldValue('DOB', value)
+                                    onChange={value =>{
+                                        setFieldValue('DOB', value ? value : '' )
+                                    }
+
                                     }
                                 />
                             </FormItem>
@@ -221,7 +223,7 @@ const withFormikHOC = withFormik({
             password: '',
             verifyPassword: '',
             phoneNumber: '',
-            DOB: undefined,
+            DOB: '',
             userType: ''
         };
     },
@@ -237,7 +239,7 @@ const withFormikHOC = withFormik({
             .required('Verify password is required')
             .oneOf([ref('password'), null], 'Passwords must match'),
         phoneNumber: string().required('Phone number is required'),
-        DOB: string().required('Day of birth is required'),
+        DOB: string().required('Date of birth is required'),
         userType: string().required('User type is required')
     }),
     handleSubmit: (values, { resetForm, props, setFieldError }) => {
