@@ -36,7 +36,7 @@ class BookingForm extends Component {
                 });
             })
             .catch(err => console.log(err.response));
-
+        
         if (this.props.atHome) return;
 
         const { location, searchTrips } = this.props;

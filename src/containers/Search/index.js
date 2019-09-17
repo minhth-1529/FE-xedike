@@ -8,6 +8,7 @@ import { getTrips } from 'services/Trip/actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
+
 class Trips extends PureComponent {
     componentDidMount() {
         const { location } = this.props;
@@ -18,6 +19,8 @@ class Trips extends PureComponent {
     }
 
     render() {
+        const { trips } = this.props;
+
         return (
             <div className="container">
                 <BodyWrapper>
@@ -37,7 +40,7 @@ class Trips extends PureComponent {
                                     <Icon type="car" className="mr-1" />
                                     Trips
                                 </h5>
-                                <TripItem trips={this.props.trips} />
+                                <TripItem trips={trips} />
                             </Wrapper>
                         </div>
                     </div>

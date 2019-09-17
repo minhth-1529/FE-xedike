@@ -18,6 +18,15 @@ class EditProfile extends PureComponent {
         };
     }
 
+    updateAvatar = value => {
+        this.setState(prevState=>({
+            user:{
+                ...prevState.user,
+                avatar: value
+            }
+        }));
+    };
+
     componentDidMount() {
         const { auth } = this.props;
 
@@ -56,6 +65,9 @@ class EditProfile extends PureComponent {
                                 userType={auth.user.userType}
                                 rate={user.rate}
                                 totalTrips={totalTrips}
+                                avatar={user.avatar}
+                                updateAvatar={this.updateAvatar}
+                                id={auth.user.id}
                             />
                         </div>
                         <div className="col-9">

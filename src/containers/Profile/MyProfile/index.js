@@ -22,8 +22,8 @@ class MyProfile extends PureComponent {
 
         let userId = match.params.id;
 
-        if (_.isEmpty(match.params)){
-            userId = auth.user.id
+        if (_.isEmpty(match.params)) {
+            userId = auth.user.id;
         }
 
         apiCaller(`users/${userId}`, 'GET', null)

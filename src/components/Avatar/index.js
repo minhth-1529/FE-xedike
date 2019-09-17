@@ -1,29 +1,13 @@
 import React, { PureComponent } from 'react';
 import AvatarImg from 'assets/images/user-ic.png';
-import { Avatar, UploadCustom } from './styled';
-import { Icon, Rate, message } from 'antd';
+import { Avatar, UploadAvatar } from './styled';
+import { Icon, Rate } from 'antd';
 import moment from 'moment';
 import apiCaller from 'utils/apiCaller';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-
-const getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-};
-
-const beforeUpload = file => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-        message.error('You can only upload JPG/PNG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-        message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
-};
+import { URL } from 'constants/config';
+import swal from 'sweetalert';
 
 class AvatarWrapper extends PureComponent {
     constructor(props) {
@@ -31,7 +15,7 @@ class AvatarWrapper extends PureComponent {
 
         this.state = {
             isLoading: false,
-            imageUrl: '',
+            file: null,
             rate: 0
         };
     }
@@ -89,39 +73,64 @@ class AvatarWrapper extends PureComponent {
         if (_.isEmpty(match.params)) return;
 
         apiCaller(`users/rating/${id}`, 'PUT', { rate: value })
-            .then(res => {
-                // TODO noti rating
-                console.log(res);
+            .then(() => {
+                swal({
+                    text: 'Rating successfully',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 1500
+                });
             })
             .catch(err => console.log(err.response));
-    };
-
-    uploadAvatar = info => {
-        if (info.file.status === 'uploading') {
-            this.setState({ isLoading: true });
-            return;
-        }
-
-        if (info.file.status === 'done') {
-            getBase64(info.file.originFileObj, imageUrl =>
-                this.setState({
-                    imageUrl: imageUrl,
-                    isLoading: false
-                })
-            );
-            console.log(info.file)
-            apiCaller('','POST',info.file).then(res=>{
-                console.log(res)
-            }).catch(err=>console.log(err))
-        }
     };
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
             rate: nextProps.rate
         });
-        console.log('sdsds')
     }
+
+    onHandleAvatar = e => {
+        const { id } = this.props;
+        let file = e.target.files[0];
+
+        const formData = new FormData();
+
+        formData.append('avatar', file);
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        };
+        this.setState({
+            isLoading: true
+        });
+        apiCaller(`users/upload-avatar/${id}`, 'POST', formData, config)
+            .then(res => {
+                this.props.updateAvatar(res.data.avatar);
+                this.setState({
+                    isLoading: false
+                });
+            })
+            .catch(err => {
+                console.log(err.response);
+            });
+        // axios
+        //     .post(
+        //         'http://localhost:5000/api/5d6f71ce7163941bc0990b31',
+        //         formData,
+        //         config
+        //     )
+        //     .then(res => {
+        //         this.props.updateAvatar(res.data.avatar);
+        //         this.setState({
+        //             isLoading: false
+        //         });
+        //     })
+        //     .catch(err => {
+        //         console.log(err.response);
+        //     });
+    };
 
     render() {
         const {
@@ -133,39 +142,29 @@ class AvatarWrapper extends PureComponent {
             totalTrips
         } = this.props;
 
-        const { imageUrl, isLoading } = this.state;
+        const { isLoading } = this.state;
 
         return (
             <Avatar>
                 <div className="text-center">
-                    <form onSubmit={this.handleSubmit}>
-                        <UploadCustom
-                            name="avatar"
-                            listType="picture-card"
-                            className="avatar-uploader"
-                            action=""
-                            showUploadList={false}
-                            beforeUpload={beforeUpload}
-                            onChange={this.uploadAvatar}
-                            loading={isLoading}
-                        >
+                    <UploadAvatar isLoading={isLoading}>
+                        <label className="cursor-point mb-0">
                             <img
-                                className="avatar"
-                                src={imageUrl ? imageUrl : AvatarImg}
+                                src={!avatar ? AvatarImg : `${URL}/${avatar}`}
                                 alt="avatar"
                             />
-                            <div className="btn-upload">
-                                <Icon
-                                    type={
-                                        isLoading
-                                            ? 'loading'
-                                            : 'upload'
-                                    }
-                                    style={{ fontSize: '24px' }}
-                                />
-                            </div>
-                        </UploadCustom>
-                    </form>
+                            <input
+                                className="d-none"
+                                type="file"
+                                onChange={this.onHandleAvatar}
+                            />
+                        </label>
+                        <div className="btn-upload">
+                            <Icon type={isLoading ? 'loading' : 'plus'} />
+                            <div className="ant-upload-text">Upload</div>
+                        </div>
+                    </UploadAvatar>
+
                     <h5 className="mb-0">{fullName}</h5>
                 </div>
                 <div className="mt-3 info fz-14">
