@@ -1,2 +1,2 @@
-export const API_URL = 'http://localhost:5000/api';
-export const URL = 'http://localhost:5000';
+export const URL = process.env.NODE_ENV === "dev" ? 'http://localhost:5000' : 'https://xedike-api.herokuapp.com/';
+export const API_URL = process.env.NODE_ENV === 'dev' ? 'http://localhost:5000/api' : 'https://xedike-api.herokuapp.com/api';
