@@ -15,6 +15,7 @@ class PersonalForm extends Component {
 
         return (
             <Formik
+                enableReinitialize={true}
                 initialValues={{
                     email: email,
                     fullName: fullName,
@@ -195,8 +196,8 @@ class PersonalForm extends Component {
                                     help={touched.DOB && errors.DOB}
                                 >
                                     <DatePicker
-                                        format="DD/MM/YYYY"
                                         value={values.DOB}
+                                        format="DD/MM/YYYY"
                                         size="large"
                                         className="d-block"
                                         name="DOB"

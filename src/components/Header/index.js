@@ -49,7 +49,12 @@ class Header extends PureComponent {
     };
 
     render() {
-        const { signInVisible, registerVisible, addCarVisible, createVisible } = this.state;
+        const {
+            signInVisible,
+            registerVisible,
+            addCarVisible,
+            createVisible
+        } = this.state;
         const { auth } = this.props;
 
         const menu = (
@@ -165,7 +170,9 @@ class Header extends PureComponent {
                                                     createVisible={
                                                         createVisible
                                                     }
-                                                    createModal={this.createModal}
+                                                    createModal={
+                                                        this.createModal
+                                                    }
                                                 />
                                             </NavItem>
                                         </>

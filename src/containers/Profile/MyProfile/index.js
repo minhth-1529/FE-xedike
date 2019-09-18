@@ -51,6 +51,7 @@ class MyProfile extends PureComponent {
                                 fullName={user.fullName}
                                 userType={auth.user.userType}
                                 rate={user.rate}
+                                avatar={user.avatar}
                             />
                         </div>
                         <div className="col-9">

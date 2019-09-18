@@ -115,21 +115,6 @@ class AvatarWrapper extends PureComponent {
             .catch(err => {
                 console.log(err.response);
             });
-        // axios
-        //     .post(
-        //         'http://localhost:5000/api/5d6f71ce7163941bc0990b31',
-        //         formData,
-        //         config
-        //     )
-        //     .then(res => {
-        //         this.props.updateAvatar(res.data.avatar);
-        //         this.setState({
-        //             isLoading: false
-        //         });
-        //     })
-        //     .catch(err => {
-        //         console.log(err.response);
-        //     });
     };
 
     render() {
@@ -147,24 +132,38 @@ class AvatarWrapper extends PureComponent {
         return (
             <Avatar>
                 <div className="text-center">
-                    <UploadAvatar isLoading={isLoading}>
-                        <label className="cursor-point mb-0">
-                            <img
-                                src={!avatar ? AvatarImg : `${URL}/${avatar}`}
-                                alt="avatar"
-                            />
-                            <input
-                                className="d-none"
-                                type="file"
-                                onChange={this.onHandleAvatar}
-                            />
-                        </label>
-                        <div className="btn-upload">
-                            <Icon type={isLoading ? 'loading' : 'plus'} />
-                            <div className="ant-upload-text">Upload</div>
-                        </div>
-                    </UploadAvatar>
-
+                    {isMyProfile ? (
+                        <UploadAvatar isLoading={isLoading}>
+                            <label className="cursor-point mb-0">
+                                <img
+                                    src={
+                                        !avatar ? AvatarImg : `${URL}/${avatar}`
+                                    }
+                                    alt="avatar"
+                                />
+                                <input
+                                    className="d-none"
+                                    type="file"
+                                    onChange={this.onHandleAvatar}
+                                />
+                            </label>
+                            <div className="btn-upload">
+                                <Icon type={isLoading ? 'loading' : 'plus'} />
+                                <div className="ant-upload-text">Upload</div>
+                            </div>
+                        </UploadAvatar>
+                    ) : (
+                        <UploadAvatar isLoading={isLoading}>
+                            <label className="cursor-point mb-0">
+                                <img
+                                    src={
+                                        !avatar ? AvatarImg : `${URL}/${avatar}`
+                                    }
+                                    alt="avatar"
+                                />
+                            </label>
+                        </UploadAvatar>
+                    )}
                     <h5 className="mb-0">{fullName}</h5>
                 </div>
                 <div className="mt-3 info fz-14">

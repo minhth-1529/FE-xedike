@@ -30,11 +30,8 @@ class EditProfile extends PureComponent {
     componentDidMount() {
         const { auth } = this.props;
 
-        this.props.getHistoryTrips();
-
         apiCaller(`users/${auth.user.id}`, 'GET', null)
             .then(res => {
-                // TODO update now fullName
                 _.map(Object.keys(res.data), item => {
                     this.setState({
                         [item]: res.data[item]

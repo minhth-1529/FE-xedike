@@ -114,7 +114,7 @@ class RegisterForm extends PureComponent {
                                     size="large"
                                     className="d-block"
                                     name="DOB"
-                                    onChange={value =>{
+                                    onChange={(string,value) =>{
                                         setFieldValue('DOB', value ? value : '' )
                                     }
 

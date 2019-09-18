@@ -10,6 +10,7 @@ const FormItem = Form.Item;
 class PasswordForm extends PureComponent {
     render() {
         const { id } = this.props;
+
         return (
             <Formik
                 initialValues={{
