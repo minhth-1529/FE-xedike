@@ -115,7 +115,7 @@ class AvatarWrapper extends PureComponent {
                             <label className="cursor-point mb-0">
                                 <img
                                     src={
-                                        !avatar ? AvatarImg : `${URL}/${avatar}`
+                                        !avatar ? AvatarImg : avatar
                                     }
                                     alt="avatar"
                                 />
@@ -135,7 +135,7 @@ class AvatarWrapper extends PureComponent {
                             <label className="cursor-point mb-0">
                                 <img
                                     src={
-                                        !avatar ? AvatarImg : `${URL}/${avatar}`
+                                        !avatar ? AvatarImg : avatar
                                     }
                                     alt="avatar"
                                 />
