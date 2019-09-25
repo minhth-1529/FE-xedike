@@ -5,7 +5,6 @@ import { Icon, Rate } from 'antd';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import { URL } from 'constants/config';
 import { ratingDriver } from 'services/User/actions.js';
 import { updateAvatar } from 'services/User/actions.js';
 import { connect } from 'react-redux';
