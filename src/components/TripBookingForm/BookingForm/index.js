@@ -9,7 +9,9 @@ import apiCaller from 'utils/apiCaller';
 import swal from 'sweetalert';
 import { connect } from 'react-redux';
 import { searchTrips } from 'services/Trip/actions.js';
+import { getProvinces } from 'services/Province/actions.js';
 import { withRouter } from 'react-router-dom';
+
 import moment from 'moment';
 
 const FormItem = Form.Item;
@@ -20,7 +22,6 @@ class BookingForm extends Component {
         super(props);
 
         this.state = {
-            locationArr: [],
             locationFrom: undefined,
             locationTo: undefined,
             startTime: undefined,
@@ -29,14 +30,10 @@ class BookingForm extends Component {
     }
 
     componentDidMount() {
-        apiCaller('provinces', 'GET', null)
-            .then(res => {
-                this.setState({
-                    locationArr: res.data
-                });
-            })
-            .catch(err => console.log(err.response));
-        
+        const { getProvinces } = this.props;
+
+        getProvinces();
+
         if (this.props.atHome) return;
 
         const { location, searchTrips } = this.props;
@@ -67,15 +64,16 @@ class BookingForm extends Component {
     }
 
     render() {
-        const locations = _.map(this.state.locationArr, (item, index) => {
+        const { atHome, history, searchTrips } = this.props;
+        const { locationFrom, locationTo, startTime, slot } = this.state;
+
+        const locations = _.map(this.props.provinces, (item, index) => {
             return (
                 <Option key={index} value={item.Title}>
                     {item.Title}
                 </Option>
             );
         });
-        const { atHome, history, searchTrips } = this.props;
-        const { locationFrom, locationTo, startTime, slot } = this.state;
 
         return (
             <Formik
@@ -332,17 +330,26 @@ class BookingForm extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        provinces: state.Provinces
+    };
+};
+
 const mapDispatchToProps = dispatch => {
     return {
         searchTrips: payload => {
             dispatch(searchTrips(payload));
+        },
+        getProvinces: () => {
+            dispatch(getProvinces());
         }
     };
 };
 
 export default withRouter(
     connect(
-        null,
+        mapStateToProps,
         mapDispatchToProps
     )(BookingForm)
 );

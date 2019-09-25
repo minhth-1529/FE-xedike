@@ -3,11 +3,12 @@ import AvatarImg from 'assets/images/user-ic.png';
 import { Avatar, UploadAvatar } from './styled';
 import { Icon, Rate } from 'antd';
 import moment from 'moment';
-import apiCaller from 'utils/apiCaller';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { URL } from 'constants/config';
-import swal from 'sweetalert';
+import { ratingDriver } from 'services/User/actions.js';
+import { updateAvatar } from 'services/User/actions.js';
+import { connect } from 'react-redux';
 
 class AvatarWrapper extends PureComponent {
     constructor(props) {
@@ -15,19 +16,18 @@ class AvatarWrapper extends PureComponent {
 
         this.state = {
             isLoading: false,
-            file: null,
-            rate: 0
+            file: null
         };
     }
 
-    handleInfo = (isMyProfile, userType, totalTrips = 0) => {
+    handleInfo = (rate, isMyProfile, userType, totalTrips = 0) => {
         if (isMyProfile && userType === 'driver') {
             return (
                 <>
                     <p className="mb-0">
                         <strong>Your rating:</strong>
                     </p>
-                    <Rate value={this.state.rate} disabled />
+                    <Rate value={rate} disabled />
                 </>
             );
         } else if (isMyProfile && userType === 'passenger') {
@@ -43,7 +43,7 @@ class AvatarWrapper extends PureComponent {
                     <p className="mb-0">
                         <strong>Your rating:</strong>
                     </p>
-                    <Rate value={this.state.rate} disabled />
+                    <Rate value={rate} disabled />
                 </>
             );
         } else if (!isMyProfile) {
@@ -53,7 +53,7 @@ class AvatarWrapper extends PureComponent {
                         <strong>Rating for driver:</strong>
                     </p>
                     <Rate
-                        value={this.state.rate}
+                        value={rate}
                         onChange={this.handleRating}
                         disabled={userType === 'driver' && true}
                     />
@@ -63,58 +63,35 @@ class AvatarWrapper extends PureComponent {
     };
 
     handleRating = value => {
-        const { match } = this.props;
+        const { match, ratingDriver } = this.props;
         const { id } = match.params;
-
-        this.setState({
-            rate: value
-        });
 
         if (_.isEmpty(match.params)) return;
 
-        apiCaller(`users/rating/${id}`, 'PUT', { rate: value })
-            .then(() => {
-                swal({
-                    text: 'Rating successfully',
-                    icon: 'success',
-                    buttons: false,
-                    timer: 1500
-                });
-            })
-            .catch(err => console.log(err.response));
+        ratingDriver(id, value);
     };
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState({
-            rate: nextProps.rate
-        });
-    }
-
     onHandleAvatar = e => {
-        const { id } = this.props;
         let file = e.target.files[0];
-
+        const { id, updateAvatar } = this.props;
         const formData = new FormData();
-
-        formData.append('avatar', file);
         const config = {
             headers: {
                 'content-type': 'multipart/form-data'
             }
         };
+
+        formData.append('avatar', file);
+
         this.setState({
             isLoading: true
         });
-        apiCaller(`users/upload-avatar/${id}`, 'POST', formData, config)
-            .then(res => {
-                this.props.updateAvatar(res.data.avatar);
-                this.setState({
-                    isLoading: false
-                });
-            })
-            .catch(err => {
-                console.log(err.response);
+
+        updateAvatar(id, formData, config, () => {
+            this.setState({
+                isLoading: false
             });
+        });
     };
 
     render() {
@@ -124,7 +101,8 @@ class AvatarWrapper extends PureComponent {
             registerDate,
             isMyProfile,
             userType,
-            totalTrips
+            totalTrips,
+            rate
         } = this.props;
 
         const { isLoading } = this.state;
@@ -164,18 +142,21 @@ class AvatarWrapper extends PureComponent {
                             </label>
                         </UploadAvatar>
                     )}
-                    <h5 className="mb-0">{fullName}</h5>
+                    <h5 className="mb-0 name">{fullName}</h5>
                 </div>
                 <div className="mt-3 info fz-14">
                     <p className="mb-1">
                         <strong>Active day:</strong>{' '}
                         {moment(registerDate).format('DD/MM/YYYY')}
                     </p>
-                    {this.handleInfo(isMyProfile, userType, totalTrips)}
+                    {this.handleInfo(rate, isMyProfile, userType, totalTrips)}
                 </div>
             </Avatar>
         );
     }
 }
 
-export default withRouter(AvatarWrapper);
+export default connect(
+    null,
+    { ratingDriver, updateAvatar }
+)(withRouter(AvatarWrapper));

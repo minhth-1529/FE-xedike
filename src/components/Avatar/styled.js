@@ -7,6 +7,12 @@ export const Avatar = styled(Wrapper)`
         border-radius: 6px;
         padding: 8px 16px;
     }
+
+    .name {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
 `;
 
 export const UploadAvatar = styled.div`
@@ -42,7 +48,7 @@ export const UploadAvatar = styled.div`
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        opacity: ${props=>props.isLoading ? 1 : 0};
+        opacity: ${props => (props.isLoading ? 1 : 0)};
         transition: opacity 0.2s ease-in-out;
         pointer-events: none;
     }

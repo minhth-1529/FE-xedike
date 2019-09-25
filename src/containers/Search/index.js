@@ -19,7 +19,7 @@ class Trips extends PureComponent {
     }
 
     render() {
-        const { trips } = this.props;
+        const { trips, user } = this.props;
 
         return (
             <div className="container">
@@ -40,7 +40,10 @@ class Trips extends PureComponent {
                                     <Icon type="car" className="mr-1" />
                                     Trips
                                 </h5>
-                                <TripItem trips={trips} />
+                                <TripItem
+                                    userType={user.user.userType}
+                                    trips={trips}
+                                />
                             </Wrapper>
                         </div>
                     </div>
@@ -52,7 +55,8 @@ class Trips extends PureComponent {
 
 const mapStateToProps = state => {
     return {
-        trips: state.Trips
+        trips: state.Trips,
+        user: state.Authenticate
     };
 };
 

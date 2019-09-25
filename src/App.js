@@ -40,6 +40,7 @@ const App = props => {
                     />
                     <Route path="/driver-profile/:id" component={MyProfile} />
                     <Route path="/my-profile" component={authenticate ? MyProfile : NotFound} />
+                    <Route path="/" component={NotFound} />
                 </Switch>
                 <Footer />
             </BrowserRouter>

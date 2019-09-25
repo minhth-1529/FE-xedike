@@ -1,26 +1,17 @@
 import React, { PureComponent } from 'react';
-import { Icon } from 'antd';
+import { Icon, Skeleton } from 'antd';
 import { connect } from 'react-redux';
-import apiCaller from 'utils/apiCaller';
 import PersonalForm from './PersonalForm';
 import PasswordForm from './PasswordForm';
-import _ from 'lodash';
 import { Wrapper, BodyWrapper } from 'styled';
 import AvatarWrapper from 'components/Avatar';
 import { getHistoryTrips } from 'services/Trip/actions.js';
+import { getDetailUser } from 'services/User/actions.js';
 
 class EditProfile extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            user: {}
-        };
-    }
-
     updateAvatar = value => {
-        this.setState(prevState=>({
-            user:{
+        this.setState(prevState => ({
+            user: {
                 ...prevState.user,
                 avatar: value
             }
@@ -28,44 +19,37 @@ class EditProfile extends PureComponent {
     };
 
     componentDidMount() {
-        const { auth } = this.props;
+        const { auth, getDetailUser, getHistoryTrips } = this.props;
 
-        apiCaller(`users/${auth.user.id}`, 'GET', null)
-            .then(res => {
-                _.map(Object.keys(res.data), item => {
-                    this.setState({
-                        [item]: res.data[item]
-                    });
-                });
-            })
-            .catch(err => console.log(err.response));
+        getDetailUser(auth.user.id);
+        getHistoryTrips();
     }
 
     render() {
-        const { auth, historyTrips } = this.props;
-
-        const { user } = this.state;
-
-        let emptyUser = _.isEmpty(user);
-
+        const { historyTrips, userInfo } = this.props;
         const totalTrips = historyTrips.length;
+        const {user} = userInfo
 
         return (
             <div className="container">
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
-                            <AvatarWrapper
-                                registerDate={user.registerDate}
-                                fullName={user.fullName}
-                                isMyProfile
-                                userType={auth.user.userType}
-                                rate={user.rate}
-                                totalTrips={totalTrips}
-                                avatar={user.avatar}
-                                updateAvatar={this.updateAvatar}
-                                id={auth.user.id}
-                            />
+                            {userInfo.isLoading ? (
+                                <Skeleton avatar paragraph={{ rows: 4 }} />
+                            ) : (
+                                <AvatarWrapper
+                                    registerDate={user.registerDate}
+                                    fullName={user.fullName}
+                                    isMyProfile
+                                    userType={user.userType}
+                                    rate={user.rate}
+                                    totalTrips={totalTrips}
+                                    avatar={user.avatar}
+                                    updateAvatar={this.updateAvatar}
+                                    id={user._id}
+                                />
+                            )}
                         </div>
                         <div className="col-9">
                             <Wrapper>
@@ -73,20 +57,27 @@ class EditProfile extends PureComponent {
                                     <Icon type="user" className="mr-1" />
                                     Personal information
                                 </h5>
-                                {!emptyUser && (
+                                {userInfo.isLoading ? (
+                                    <Skeleton paragraph={{ rows: 6 }} />
+                                ) : (
                                     <PersonalForm
                                         email={user.email}
                                         fullName={user.fullName}
                                         DOB={user.DOB}
                                         phoneNumber={user.phoneNumber}
-                                        id={auth.user.id}
+                                        id={user._id}
+                                        isLoading={userInfo.isLoading}
                                     />
                                 )}
                                 <h5 className="font-weight-normal d-flex align-items-center mb-4 mt-5">
                                     <Icon type="lock" className="mr-1" /> Change
                                     password
                                 </h5>
-                                <PasswordForm id={auth.user.id} />
+                                {userInfo.isLoading ? (
+                                    <Skeleton paragraph={{ rows: 6 }} />
+                                ) : (
+                                    <PasswordForm id={user._id} />
+                                )}
                             </Wrapper>
                         </div>
                     </div>
@@ -99,11 +90,12 @@ class EditProfile extends PureComponent {
 const mapStateToProps = state => {
     return {
         auth: state.Authenticate,
-        historyTrips: state.Trips
+        historyTrips: state.Trips,
+        userInfo: state.UserInfo
     };
 };
 
 export default connect(
     mapStateToProps,
-    { getHistoryTrips }
+    { getHistoryTrips, getDetailUser }
 )(EditProfile);

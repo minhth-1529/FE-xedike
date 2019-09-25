@@ -1,24 +1,15 @@
 import React, { PureComponent } from 'react';
-import { Icon } from 'antd';
-import apiCaller from 'utils/apiCaller';
+import { Icon, Skeleton } from 'antd';
 import _ from 'lodash';
 import { Wrapper, BodyWrapper } from 'styled';
 import { withRouter } from 'react-router-dom';
 import AvatarWrapper from 'components/Avatar';
 import { connect } from 'react-redux';
+import { getDetailUser } from 'services/User/actions.js';
 
 class MyProfile extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            user: {},
-            cars: []
-        };
-    }
-
     componentDidMount() {
-        const { match, auth } = this.props;
+        const { match, auth, getDetailUser } = this.props;
 
         let userId = match.params.id;
 
@@ -26,33 +17,29 @@ class MyProfile extends PureComponent {
             userId = auth.user.id;
         }
 
-        apiCaller(`users/${userId}`, 'GET', null)
-            .then(res => {
-                _.map(Object.keys(res.data), item => {
-                    this.setState({
-                        [item]: res.data[item]
-                    });
-                });
-            })
-            .catch(err => console.log(err.response));
+        getDetailUser(userId);
     }
 
     render() {
-        const { user, cars } = this.state;
-        const { auth } = this.props;
+        const { userInfo } = this.props;
+        const { user, cars } = userInfo;
 
         return (
             <div className="container">
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
-                            <AvatarWrapper
-                                registerDate={user.registerDate}
-                                fullName={user.fullName}
-                                userType={auth.user.userType}
-                                rate={user.rate}
-                                avatar={user.avatar}
-                            />
+                            {userInfo.isLoading ? (
+                                <Skeleton avatar paragraph={{ rows: 4 }} />
+                            ) : (
+                                <AvatarWrapper
+                                    registerDate={user.registerDate}
+                                    fullName={user.fullName}
+                                    userType={user.userType}
+                                    rate={user.rate}
+                                    avatar={user.avatar}
+                                />
+                            )}
                         </div>
                         <div className="col-9">
                             <Wrapper>
@@ -150,11 +137,12 @@ class MyProfile extends PureComponent {
 
 const mapStateToProps = state => {
     return {
-        auth: state.Authenticate
+        auth: state.Authenticate,
+        userInfo: state.UserInfo
     };
 };
 
 export default connect(
     mapStateToProps,
-    null
+    { getDetailUser }
 )(withRouter(MyProfile));

@@ -17,7 +17,7 @@ export const ButtonCustom = styled(Button)`
 `;
 
 export const TripBookingContainer = styled.div`
-    height: 75vh;
+    height: calc(100vh - 51px);
     display: flex;
     align-items: center;
     justify-content: center;

@@ -3,11 +3,11 @@ import { ModalCustom } from '../styled';
 import { Form, Button, InputNumber, Spin } from 'antd';
 import { object, string } from 'yup';
 import { withFormik, Form as FormikForm } from 'formik';
-import apiCaller from 'utils/apiCaller';
 import { connect } from 'react-redux';
 import { authLogin } from 'services/Auth/actions.js';
 import formInput from 'utils/formInput';
 import swal from 'sweetalert';
+import { addCar } from 'services/Car/actions';
 
 const FormItem = Form.Item;
 
@@ -39,7 +39,7 @@ class AddCarForm extends PureComponent {
                                     errors.carName,
                                     'carName',
                                     'Car name',
-                                    ''
+                                    'car'
                                 )}
                             </div>
                             <div className="col-6">
@@ -48,7 +48,7 @@ class AddCarForm extends PureComponent {
                                     errors.carModel,
                                     'carModel',
                                     'Car model',
-                                    ''
+                                    'action.payload'
                                 )}
                             </div>
                         </div>
@@ -59,7 +59,7 @@ class AddCarForm extends PureComponent {
                                     errors.autoMakers,
                                     'autoMakers',
                                     'Automakers',
-                                    ''
+                                    'car'
                                 )}
                             </div>
                             <div className="col-6">
@@ -96,7 +96,7 @@ class AddCarForm extends PureComponent {
                                     errors.carCertificate,
                                     'carCertificate',
                                     'Car certificate',
-                                    ''
+                                    'car'
                                 )}
                             </div>
                         </div>
@@ -134,19 +134,17 @@ const withFormikHOC = withFormik({
         carCertificate: string().required('This field is required')
     }),
     handleSubmit: (values, { resetForm, props }) => {
-        apiCaller('cars', 'POST', values)
-            .then(() => {
-                swal({
-                    text: 'Add car successfully!',
-                    icon: 'success',
-                    buttons: false,
-                    timer: 1500
-                }).then(() => {
-                    resetForm();
-                    props.addCarModal(false);
-                });
-            })
-            .catch(err => console.log(err.response));
+        props.addCar(values, () => {
+            swal({
+                text: 'Add car successfully!',
+                icon: 'success',
+                buttons: false,
+                timer: 1500
+            }).then(() => {
+                resetForm();
+                props.addCarModal(false);
+            });
+        });
     }
 });
 
@@ -154,6 +152,9 @@ const mapDispatchToProps = dispatch => {
     return {
         authLogin: payload => {
             dispatch(authLogin(payload));
+        },
+        addCar: (payload,callback) => {
+            dispatch(addCar(payload,callback));
         }
     };
 };

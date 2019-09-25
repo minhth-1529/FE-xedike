@@ -4,24 +4,54 @@ import TripItem from './TripItem';
 import { Button } from 'antd';
 import { connect } from 'react-redux';
 import { getTrips } from 'services/Trip/actions';
-import _ from 'lodash';
 
 class Trips extends PureComponent {
-    componentDidMount() {
-        this.props.getTrips();
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            limit: 5
+        };
     }
 
+    componentDidMount() {
+        this.props.getTrips(this.state.limit);
+    }
+
+    loadMore = () => {
+        let { limit } = this.state;
+
+        this.setState(
+            {
+                limit: limit + 5
+            },
+            () => {
+                this.props.getTrips(this.state.limit);
+            }
+        );
+    };
+
     render() {
-        const { trips } = this.props;
-        const isEmpty = _.isEmpty(trips);
+        const { user, trips } = this.props;
+        const length = trips.length;
+        const { limit } = this.state;
 
         return (
             <Section>
                 <h2 className="text-center mb-5">Trip Recent</h2>
-                <TripItem trips={trips} large priceFont="30px" />
-                {!isEmpty && (
+                <TripItem
+                    userType={user.user.userType}
+                    trips={trips}
+                    large
+                    priceFont="30px"
+                />
+                {limit === length && (
                     <div className="text-center mt-5">
-                        <Button type="dashed" size="large">
+                        <Button
+                            onClick={this.loadMore}
+                            type="dashed"
+                            size="large"
+                        >
                             Load more
                         </Button>
                     </div>
@@ -33,6 +63,7 @@ class Trips extends PureComponent {
 
 const mapStateToProps = state => {
     return {
+        user: state.Authenticate,
         trips: state.Trips
     };
 };

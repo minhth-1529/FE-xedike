@@ -3,11 +3,10 @@ import { withFormik } from 'formik';
 import { Form, Icon, Select, Button } from 'antd';
 import _ from 'lodash';
 import { ModalCustom, InputNumberCustom, DatePickerCustom } from '../styled';
-import apiCaller from 'utils/apiCaller';
 import { string, object } from 'yup';
-import swal from 'sweetalert';
 import { connect } from 'react-redux';
-import { getTrips } from 'services/Trip/actions';
+import { getProvinces } from 'services/Province/actions.js';
+import { createTrip } from 'services/Trip/actions.js';
 
 const { Option } = Select;
 
@@ -21,13 +20,7 @@ class CreateTrip extends PureComponent {
     }
 
     componentDidMount() {
-        apiCaller('provinces', 'GET', null)
-            .then(res => {
-                this.setState({
-                    locationArr: res.data
-                });
-            })
-            .catch(err => console.log(err.response));
+        this.props.getProvinces();
     }
 
     render() {
@@ -41,7 +34,7 @@ class CreateTrip extends PureComponent {
             setFieldValue
         } = this.props;
 
-        const locations = _.map(this.state.locationArr, (item, index) => {
+        const locations = _.map(this.props.provinces, (item, index) => {
             return (
                 <Option key={index} value={item.Title}>
                     {item.Title}
@@ -159,9 +152,16 @@ class CreateTrip extends PureComponent {
                                 <label className="mb-0">Fee</label>
                                 <InputNumberCustom
                                     min={10000}
-                                    defaultValue={10000}
+                                    step="10000"
+                                    value={values.fee}
                                     size="large"
                                     name="fee"
+                                    formatter={value =>
+                                        `${value}`.replace(
+                                            /\B(?=(\d{3})+(?!\d))/g,
+                                            ','
+                                        )
+                                    }
                                     onChange={value =>
                                         setFieldValue('fee', value)
                                     }
@@ -218,22 +218,20 @@ const withFormikHOC = withFormik({
         startTime: string().required('This field is required')
     }),
     handleSubmit: (values, { resetForm, props }) => {
-        apiCaller('trips', 'POST', values).then(res => {
-            swal({
-                text: 'Create trip successfully!',
-                icon: 'success',
-                buttons: false,
-                timer: 1500
-            }).then(() => {
-                resetForm();
-                props.createModal(false);
-                props.getTrips();
-            });
+        props.createTrip(values, () => {
+            resetForm();
+            props.createModal(false);
         });
     }
 });
 
+const mapStateToProps = state => {
+    return {
+        provinces: state.Provinces
+    };
+};
+
 export default connect(
-    null,
-    { getTrips }
+    mapStateToProps,
+    { getProvinces, createTrip }
 )(withFormikHOC(CreateTrip));

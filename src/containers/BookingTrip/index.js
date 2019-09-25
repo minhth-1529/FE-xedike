@@ -7,10 +7,13 @@ import { withFormik, Form as FormikForm } from 'formik';
 import _ from 'lodash';
 import apiCaller from 'utils/apiCaller';
 import { InputNumberCustom } from 'components/TripBookingForm/styled';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { BodyWrapper } from 'styled';
 import swal from 'sweetalert';
 import { connect } from 'react-redux';
+import { getDetailTrip } from 'services/Trip/actions.js';
+import { getProvinces } from 'services/Province/actions.js';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -25,19 +28,24 @@ class BookingTrip extends Component {
     }
 
     componentDidMount() {
-        apiCaller('provinces', 'GET', null)
-            .then(res => {
-                this.setState({
-                    locationArr: res.data
-                });
-            })
-            .catch(err => console.log(err.response));
+        const { match, getDetailTrip, getProvinces } = this.props;
+        const { id } = match.params;
+
+        getDetailTrip(id);
+        getProvinces();
     }
 
     render() {
-        const { touched, errors, values, setFieldValue } = this.props;
+        const {
+            touched,
+            errors,
+            values,
+            setFieldValue,
+            trip,
+            provinces
+        } = this.props;
 
-        const locations = _.map(this.state.locationArr, (item, index) => {
+        const locations = _.map(provinces, (item, index) => {
             return (
                 <Option key={index} value={item.Title}>
                     {item.Title}
@@ -50,35 +58,43 @@ class BookingTrip extends Component {
                 <BodyWrapper>
                     <Wrapper>
                         <h5 className="font-weight-normal d-flex align-items-center mb-3">
-                            <Icon type="car" className="mr-1" /> Trip
-                            information
+                            <Icon type="car" className="mr-1" /> Trip information
                         </h5>
                         <div className="d-flex">
                             <div className="flex-grow-1">
                                 <div className="d-flex align-items-center mb-1">
-                                    sdsd
+                                    {trip.locationFrom}
                                     <Icon type="arrow-right" className="mx-2" />
-                                    sdsd
+                                    {trip.locationTo}
                                 </div>
                                 <div className="d-flex align-items-center">
                                     <Icon type="calendar" className="mr-1" />
-                                    2/2/1993
+                                    {moment(trip.startTime).format(
+                                        'DD/MM/YYYY'
+                                    )}
                                 </div>
                             </div>
                             <div className="flex-grow-1">
                                 <div className="mb-1">Honda</div>
                                 <div className="d-flex align-items-center">
-                                    <Icon type="team" className="mr-1" />6
+                                    <Icon type="team" className="mr-1" /> {trip.availableSeats}
                                 </div>
                             </div>
-                            <div className="flex-grow-1 d-inline-flex">
+                            <Link
+                                className="flex-grow-1 d-inline-flex text-dark"
+                                to={`/driver-profile/${trip.driverID &&
+                                    trip.driverID._id}`}
+                            >
                                 <Thumb
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSivuKfPqK-w1-eXntjE5MgV1VtoLLxZMtagarm5zVNoXBK3KpE"
                                     alt="driver"
                                     className="mr-2"
                                 />
                                 <div>
-                                    <p className="mb-1">adasdas</p>
+                                    <p className="mb-1">
+                                        {trip.driverID &&
+                                            trip.driverID.fullName}
+                                    </p>
                                     <div className="d-flex align-items-center">
                                         <Icon
                                             type="star"
@@ -86,12 +102,12 @@ class BookingTrip extends Component {
                                             className="mr-1"
                                             twoToneColor="#ffc107"
                                         />
-                                        4
+                                        {trip.driverID && trip.driverID.rate}
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                             <Price priceFont="30px" className="flex-grow-1">
-                                122222 <sup>vnd</sup>
+                                {trip.fee} <sup>vnd</sup>
                             </Price>
                         </div>
                     </Wrapper>
@@ -332,11 +348,13 @@ const withFormikHOC = withFormik({
 
 const mapStateToProps = state => {
     return {
-        user: state.Authenticate
+        user: state.Authenticate,
+        trip: state.Trips,
+        provinces: state.Provinces
     };
 };
 
 export default connect(
     mapStateToProps,
-    null
+    { getDetailTrip, getProvinces }
 )(withRouter(withFormikHOC(BookingTrip)));

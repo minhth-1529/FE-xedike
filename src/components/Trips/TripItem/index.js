@@ -7,6 +7,10 @@ import swal from 'sweetalert';
 import swalReact from '@sweetalert/with-react';
 import apiCaller from 'utils/apiCaller';
 import { FaArrowRight, FaCalendarAlt, FaUsers, FaStar } from 'react-icons/fa';
+import { finishTrip } from 'services/Trip/actions.js';
+import { connect } from 'react-redux';
+import moment from 'moment';
+
 class TripItem extends PureComponent {
     constructor(props) {
         super(props);
@@ -17,6 +21,8 @@ class TripItem extends PureComponent {
     }
 
     handleFinish = (tripID, driverID) => {
+        const { finishTrip } = this.props;
+
         swal({
             title: 'Would you like to rating for driver?',
             icon: 'info',
@@ -34,17 +40,8 @@ class TripItem extends PureComponent {
             }
         })
             .then(value => {
-                if (value !== 'rate') {
-                    return apiCaller(`trips/finish-trip/${tripID}`, 'PUT', null)
-                        .then(() => {
-                            swal({
-                                title: 'Finish trip successfully!',
-                                text: '',
-                                icon: 'success',
-                                timer: 2000
-                            });
-                        })
-                        .catch(err => console.log(err.response));
+                if (value === 'close') {
+                    return finishTrip(tripID);
                 }
 
                 return swalReact(<Rate onChange={this.handleRating} />, {
@@ -63,16 +60,8 @@ class TripItem extends PureComponent {
                 });
             })
             .then(value => {
-                if (value !== 'submit') {
-                    return apiCaller(`trips/finish-trip/${tripID}`, 'PUT', null)
-                        .then(() => {
-                            swal({
-                                title: 'Finish trip successfully!',
-                                icon: 'success',
-                                timer: 2000
-                            });
-                        })
-                        .catch(err => console.log(err.response));
+                if (value === 'close') {
+                    return finishTrip(tripID);
                 }
 
                 apiCaller(`users/rating/${driverID}`, 'PUT', {
@@ -84,6 +73,7 @@ class TripItem extends PureComponent {
                             icon: 'success',
                             timer: 2000
                         });
+                        finishTrip(tripID);
                     })
                     .catch(err => console.log(err.response));
             });
@@ -96,7 +86,13 @@ class TripItem extends PureComponent {
     };
 
     render() {
-        const { trips = [], priceFont, large, showBtn = true } = this.props;
+        const {
+            trips = [],
+            priceFont,
+            large,
+            showBtn = true,
+            userType
+        } = this.props;
         const isEmpty = _.isEmpty(trips);
 
         return (
@@ -120,24 +116,23 @@ class TripItem extends PureComponent {
                                             {item.locationTo}
                                         </div>
                                         <div className="d-flex align-items-center">
-                                            <FaCalendarAlt
-                                                className="mr-1"
-                                            />
-                                            2/2/1993
+                                            <FaCalendarAlt className="mr-1" />
+                                            {moment(item.startTime).format(
+                                                'DD/MM/YYYY'
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex-grow-1">
                                         <div className="mb-1">Honda</div>
                                         <div className="d-flex align-items-center">
-                                            <FaUsers
-                                                className="mr-1"
-                                            />
+                                            <FaUsers className="mr-1" />
                                             {item.availableSeats}
                                         </div>
                                     </div>
                                     <Link
                                         className="flex-grow-1 d-inline-flex text-dark"
-                                        to={`/driver-profile/${item.driverID._id}`}
+                                        to={`/driver-profile/${item.driverID &&
+                                            item.driverID._id}`}
                                     >
                                         <Thumb
                                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSivuKfPqK-w1-eXntjE5MgV1VtoLLxZMtagarm5zVNoXBK3KpE"
@@ -146,14 +141,16 @@ class TripItem extends PureComponent {
                                         />
                                         <div>
                                             <p className="mb-0">
-                                                {item.driverID.fullName}
+                                                {item.driverID &&
+                                                    item.driverID.fullName}
                                             </p>
                                             <div className="d-flex align-items-center">
                                                 <FaStar
                                                     className="mr-1"
-                                                    style={{color: '#ffc107'}}
+                                                    style={{ color: '#ffc107' }}
                                                 />
-                                                {item.driverID.rate}
+                                                {item.driverID &&
+                                                    item.driverID.rate}
                                             </div>
                                         </div>
                                     </Link>
@@ -161,17 +158,22 @@ class TripItem extends PureComponent {
                                         priceFont={priceFont}
                                         className="flex-grow-2"
                                     >
-                                        {item.fee} <sup>vnd</sup>
+                                        {item.fee && item.fee.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{' '}
+                                        <sup>vnd</sup>
                                     </Price>
                                     <div className="flex-grow-0">
                                         {showBtn ? (
-                                            <Link
-                                                to={`/booking-trip/${item._id}`}
-                                                className={`btn btn-success ${large &&
-                                                    'btn-lg'}`}
-                                            >
-                                                Book now
-                                            </Link>
+                                            <>
+                                                {userType === 'passenger' && (
+                                                    <Link
+                                                        to={`/booking-trip/${item._id}`}
+                                                        className={`btn btn-success ${large &&
+                                                            'btn-lg'}`}
+                                                    >
+                                                        Book now
+                                                    </Link>
+                                                )}
+                                            </>
                                         ) : (
                                             <Button
                                                 onClick={() =>
@@ -199,4 +201,7 @@ class TripItem extends PureComponent {
     }
 }
 
-export default TripItem;
+export default connect(
+    null,
+    { finishTrip }
+)(TripItem);

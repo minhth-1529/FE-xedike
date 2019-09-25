@@ -1,17 +1,25 @@
 import React, { Component } from 'react';
 import { object, string } from 'yup';
 import { Formik, Field } from 'formik';
-import { Form, Input, Button, Icon, DatePicker, notification } from 'antd';
+import { Form, Input, Button, Icon, DatePicker } from 'antd';
 import moment from 'moment';
-import apiCaller from 'utils/apiCaller';
 import _ from 'lodash';
+import { editPersonalUser } from 'services/User/actions.js';
+import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 class PersonalForm extends Component {
     render() {
-        const { email, fullName, phoneNumber, DOB, id } = this.props;
+        const {
+            email,
+            fullName,
+            phoneNumber,
+            DOB,
+            id,
+            editPersonalUser
+        } = this.props;
 
         return (
             <Formik
@@ -20,7 +28,7 @@ class PersonalForm extends Component {
                     email: email,
                     fullName: fullName,
                     phoneNumber: phoneNumber,
-                    DOB: moment(DOB)
+                    DOB: DOB === null ? null : moment(DOB)
                 }}
                 validationSchema={object().shape({
                     email: string()
@@ -33,19 +41,11 @@ class PersonalForm extends Component {
                     DOB: string().required('Day of birth is required')
                 })}
                 onSubmit={(values, { setFieldError }) => {
-                    apiCaller(`users/personal/${id}`, 'PUT', values)
-                        .then(() => {
-                            notification.success({
-                                message: 'Update successfully',
-                                duration: 2.5,
-                                placement: 'topLeft'
-                            });
-                        })
-                        .catch(err => {
-                            _.map(Object.keys(err.response.data), field => {
-                                setFieldError(field, err.response.data[field]);
-                            });
+                    editPersonalUser(id, values, err => {
+                        _.map(Object.keys(err.response.data), field => {
+                            setFieldError(field, err.response.data[field]);
                         });
+                    });
                 }}
                 render={({
                     touched,
@@ -232,4 +232,7 @@ class PersonalForm extends Component {
     }
 }
 
-export default PersonalForm;
+export default connect(
+    null,
+    { editPersonalUser }
+)(PersonalForm);
