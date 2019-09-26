@@ -129,7 +129,6 @@ class CreateTrip extends PureComponent {
                                     <label className="mb-0">Slot</label>
                                     <InputNumberCustom
                                         min={1}
-                                        max={10}
                                         defaultValue={2}
                                         size="large"
                                         name="availableSeats"
