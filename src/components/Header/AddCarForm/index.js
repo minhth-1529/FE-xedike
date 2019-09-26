@@ -9,8 +9,6 @@ import formInput from 'utils/formInput';
 import swal from 'sweetalert';
 import { addCar } from 'services/Car/actions';
 
-const FormItem = Form.Item;
-
 class AddCarForm extends PureComponent {
     render() {
         const {
@@ -20,7 +18,8 @@ class AddCarForm extends PureComponent {
             values,
             addCarVisible,
             addCarModal,
-            setFieldValue
+            setFieldValue,
+            isSubmitting
         } = this.props;
 
         return (
@@ -30,7 +29,7 @@ class AddCarForm extends PureComponent {
                 visible={addCarVisible}
                 onCancel={() => addCarModal(false)}
             >
-                <Spin spinning={!errors && values.spinning} tip="Loading...">
+                <Spin spinning={isSubmitting} tip="Loading...">
                     <FormikForm onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-6">
@@ -63,7 +62,7 @@ class AddCarForm extends PureComponent {
                                 )}
                             </div>
                             <div className="col-6">
-                                <FormItem
+                                <Form.Item
                                     validateStatus={
                                         touched.carSeats &&
                                         errors.carSeats &&
@@ -86,7 +85,7 @@ class AddCarForm extends PureComponent {
                                             setFieldValue('carSeats', v)
                                         }
                                     />
-                                </FormItem>
+                                </Form.Item>
                             </div>
                         </div>
                         <div className="row">
@@ -133,8 +132,9 @@ const withFormikHOC = withFormik({
         autoMakers: string().required('This field is required'),
         carCertificate: string().required('This field is required')
     }),
-    handleSubmit: (values, { resetForm, props }) => {
+    handleSubmit: (values, { resetForm, props, setSubmitting }) => {
         props.addCar(values, () => {
+            setSubmitting(false);
             swal({
                 text: 'Add car successfully!',
                 icon: 'success',
@@ -153,8 +153,8 @@ const mapDispatchToProps = dispatch => {
         authLogin: payload => {
             dispatch(authLogin(payload));
         },
-        addCar: (payload,callback) => {
-            dispatch(addCar(payload,callback));
+        addCar: (payload, callback) => {
+            dispatch(addCar(payload, callback));
         }
     };
 };

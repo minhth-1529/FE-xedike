@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { ModalCustom } from '../styled';
 import { object, string, ref } from 'yup';
-import { withFormik, Form as FormikForm, Field } from 'formik';
-import { Form, Button, DatePicker } from 'antd';
+import { withFormik, Field } from 'formik';
+import { Form, Button, DatePicker, Spin } from 'antd';
 import { UserType } from './styled';
 import Driver from 'assets/images/signup_driver.png';
 import Passenger from 'assets/images/signup_passenger.png';
@@ -13,14 +13,6 @@ import swal from 'sweetalert';
 const FormItem = Form.Item;
 
 class RegisterForm extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            date: undefined
-        };
-    }
-
     render() {
         const {
             registerVisible,
@@ -30,7 +22,8 @@ class RegisterForm extends PureComponent {
             registerModal,
             handleSubmit,
             setFieldValue,
-            values
+            values,
+            isSubmitting
         } = this.props;
 
         return (
@@ -53,163 +46,171 @@ class RegisterForm extends PureComponent {
                 visible={registerVisible}
                 onCancel={() => registerModal(false)}
             >
-                <FormikForm onSubmit={handleSubmit}>
-                    {formInput(
-                        touched.email,
-                        errors.email,
-                        'email',
-                        'Email',
-                        'mail'
-                    )}
+                <Spin spinning={isSubmitting} tip="Loading...">
+                    <form onSubmit={handleSubmit}>
+                        {formInput(
+                            touched.email,
+                            errors.email,
+                            'email',
+                            'Email',
+                            'mail'
+                        )}
 
-                    {formInput(
-                        touched.fullName,
-                        errors.fullName,
-                        'fullName',
-                        'Full name',
-                        'user'
-                    )}
-                    <div className="row">
-                        <div className="col-6">
-                            {formInput(
-                                touched.password,
-                                errors.password,
-                                'password',
-                                'Password',
-                                'lock',
-                                'password'
-                            )}
+                        {formInput(
+                            touched.fullName,
+                            errors.fullName,
+                            'fullName',
+                            'Full name',
+                            'user'
+                        )}
+                        <div className="row">
+                            <div className="col-6">
+                                {formInput(
+                                    touched.password,
+                                    errors.password,
+                                    'password',
+                                    'Password',
+                                    'lock',
+                                    'password'
+                                )}
+                            </div>
+                            <div className="col-6">
+                                {formInput(
+                                    touched.verifyPassword,
+                                    errors.verifyPassword,
+                                    'verifyPassword',
+                                    'Verify password',
+                                    'lock',
+                                    'password'
+                                )}
+                            </div>
                         </div>
-                        <div className="col-6">
-                            {formInput(
-                                touched.verifyPassword,
-                                errors.verifyPassword,
-                                'verifyPassword',
-                                'Verify password',
-                                'lock',
-                                'password'
-                            )}
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-6">
-                            {formInput(
-                                touched.phoneNumber,
-                                errors.phoneNumber,
-                                'phoneNumber',
-                                'Phone number',
-                                'phone'
-                            )}
-                        </div>
-                        <div className="col-6">
-                            <FormItem
-                                validateStatus={
-                                    touched.DOB && errors.DOB && 'error'
-                                }
-                                help={touched.DOB && errors.DOB}
-                            >
-                                <label className="mb-0">Date of birth</label>
-                                <DatePicker
-                                    format="DD/MM/YYYY"
-                                    size="large"
-                                    className="d-block"
-                                    name="DOB"
-                                    onChange={(string,value) =>{
-                                        setFieldValue('DOB', value ? value : '' )
+                        <div className="row">
+                            <div className="col-6">
+                                {formInput(
+                                    touched.phoneNumber,
+                                    errors.phoneNumber,
+                                    'phoneNumber',
+                                    'Phone number',
+                                    'phone'
+                                )}
+                            </div>
+                            <div className="col-6">
+                                <FormItem
+                                    validateStatus={
+                                        touched.DOB && errors.DOB && 'error'
                                     }
-
-                                    }
-                                />
-                            </FormItem>
+                                    help={touched.DOB && errors.DOB}
+                                >
+                                    <label className="mb-0">
+                                        Date of birth
+                                    </label>
+                                    <DatePicker
+                                        format="DD/MM/YYYY"
+                                        size="large"
+                                        className="d-block"
+                                        name="DOB"
+                                        onChange={(string, value) => {
+                                            setFieldValue(
+                                                'DOB',
+                                                value ? value : ''
+                                            );
+                                        }}
+                                    />
+                                </FormItem>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-12">
-                            <label className="mb-3 mt-2">Register with?</label>
-                        </div>
-                        <div className="col-12">
-                            <div className="row">
-                                <div className="col-6">
-                                    <FormItem
-                                        validateStatus={
-                                            touched.userType &&
-                                            errors.userType &&
-                                            'error'
-                                        }
-                                        help={
-                                            touched.userType && errors.userType
-                                        }
-                                    >
-                                        <UserType>
-                                            <Field
-                                                name="userType"
-                                                render={({ field }) => (
-                                                    <input
-                                                        type="radio"
-                                                        {...field}
-                                                        value="passenger"
-                                                        checked={
-                                                            values.userType ===
-                                                            'passenger'
-                                                        }
-                                                    />
-                                                )}
-                                            />
-                                            <div className="label-wrapper">
-                                                <img
-                                                    src={Passenger}
-                                                    alt="passenger"
+                        <div className="row">
+                            <div className="col-12">
+                                <label className="mb-3 mt-2">
+                                    Register with?
+                                </label>
+                            </div>
+                            <div className="col-12">
+                                <div className="row">
+                                    <div className="col-6">
+                                        <FormItem
+                                            validateStatus={
+                                                touched.userType &&
+                                                errors.userType &&
+                                                'error'
+                                            }
+                                            help={
+                                                touched.userType &&
+                                                errors.userType
+                                            }
+                                        >
+                                            <UserType>
+                                                <Field
+                                                    name="userType"
+                                                    render={({ field }) => (
+                                                        <input
+                                                            type="radio"
+                                                            {...field}
+                                                            value="passenger"
+                                                            checked={
+                                                                values.userType ===
+                                                                'passenger'
+                                                            }
+                                                        />
+                                                    )}
                                                 />
-                                                <strong className="text-center d-block">
-                                                    Passenger
-                                                </strong>
-                                            </div>
-                                        </UserType>
-                                    </FormItem>
-                                </div>
-                                <div className="col-6">
-                                    <FormItem>
-                                        <UserType>
-                                            <Field
-                                                name="userType"
-                                                render={({ field }) => (
-                                                    <input
-                                                        type="radio"
-                                                        {...field}
-                                                        value="driver"
-                                                        checked={
-                                                            values.userType ===
-                                                            'driver'
-                                                        }
+                                                <div className="label-wrapper">
+                                                    <img
+                                                        src={Passenger}
+                                                        alt="passenger"
                                                     />
-                                                )}
-                                            />
-                                            <div className="label-wrapper">
-                                                <img
-                                                    src={Driver}
-                                                    alt="driver"
+                                                    <strong className="text-center d-block">
+                                                        Passenger
+                                                    </strong>
+                                                </div>
+                                            </UserType>
+                                        </FormItem>
+                                    </div>
+                                    <div className="col-6">
+                                        <FormItem>
+                                            <UserType>
+                                                <Field
+                                                    name="userType"
+                                                    render={({ field }) => (
+                                                        <input
+                                                            type="radio"
+                                                            {...field}
+                                                            value="driver"
+                                                            checked={
+                                                                values.userType ===
+                                                                'driver'
+                                                            }
+                                                        />
+                                                    )}
                                                 />
-                                                <strong className="text-center d-block">
-                                                    Driver
-                                                </strong>
-                                            </div>
-                                        </UserType>
-                                    </FormItem>
+                                                <div className="label-wrapper">
+                                                    <img
+                                                        src={Driver}
+                                                        alt="driver"
+                                                    />
+                                                    <strong className="text-center d-block">
+                                                        Driver
+                                                    </strong>
+                                                </div>
+                                            </UserType>
+                                        </FormItem>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="input-group mt-3">
-                        <Button
-                            htmlType="submit"
-                            type="primary"
-                            size="large"
-                            block
-                        >
-                            Register
-                        </Button>
-                    </div>
-                </FormikForm>
+                        <div className="input-group mt-3">
+                            <Button
+                                htmlType="submit"
+                                type="primary"
+                                size="large"
+                                block
+                            >
+                                Register
+                            </Button>
+                        </div>
+                    </form>
+                </Spin>
             </ModalCustom>
         );
     }
@@ -242,9 +243,13 @@ const withFormikHOC = withFormik({
         DOB: string().required('Date of birth is required'),
         userType: string().required('User type is required')
     }),
-    handleSubmit: (values, { resetForm, props, setFieldError }) => {
+    handleSubmit: (
+        values,
+        { resetForm, props, setFieldError, setSubmitting }
+    ) => {
         apiCaller('users', 'POST', values)
             .then(res => {
+                setSubmitting(false);
                 swal({
                     text: res.data.statusText,
                     icon: 'success',
@@ -256,12 +261,13 @@ const withFormikHOC = withFormik({
                 });
             })
             .catch(err => {
+                setSubmitting(false);
                 swal({
                     text: 'Some error has occurred!',
                     icon: 'error',
                     buttons: false,
                     timer: 1500
-                })
+                });
                 setFieldError('email', err.response.data.email);
                 setFieldError('phoneNumber', err.response.data.phoneNumber);
             });

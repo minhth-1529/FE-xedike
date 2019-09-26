@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Section } from './styled';
 import TripItem from './TripItem';
-import { Button } from 'antd';
+import { Button, Skeleton } from 'antd';
 import { connect } from 'react-redux';
 import { getTrips } from 'services/Trip/actions';
 
@@ -35,16 +35,21 @@ class Trips extends PureComponent {
         const { user, trips } = this.props;
         const length = trips.length;
         const { limit } = this.state;
+        const { data, isLoading } = trips;
 
         return (
             <Section>
                 <h2 className="text-center mb-5">Trip Recent</h2>
-                <TripItem
-                    userType={user.user.userType}
-                    trips={trips}
-                    large
-                    priceFont="30px"
-                />
+                {isLoading ? (
+                    <Skeleton active />
+                ) : (
+                    <TripItem
+                        userType={user.user.userType}
+                        trips={data}
+                        large
+                        priceFont="30px"
+                    />
+                )}
                 {limit === length && (
                     <div className="text-center mt-5">
                         <Button

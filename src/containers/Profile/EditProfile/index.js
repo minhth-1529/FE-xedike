@@ -36,7 +36,7 @@ class EditProfile extends PureComponent {
                     <div className="row">
                         <div className="col-3">
                             {userInfo.isLoading ? (
-                                <Skeleton avatar paragraph={{ rows: 4 }} />
+                                <Skeleton active avatar paragraph={{ rows: 4 }} />
                             ) : (
                                 <AvatarWrapper
                                     registerDate={user.registerDate}
@@ -58,7 +58,7 @@ class EditProfile extends PureComponent {
                                     Personal information
                                 </h5>
                                 {userInfo.isLoading ? (
-                                    <Skeleton paragraph={{ rows: 6 }} />
+                                    <Skeleton active paragraph={{ rows: 6 }} />
                                 ) : (
                                     <PersonalForm
                                         email={user.email}
@@ -74,7 +74,7 @@ class EditProfile extends PureComponent {
                                     password
                                 </h5>
                                 {userInfo.isLoading ? (
-                                    <Skeleton paragraph={{ rows: 6 }} />
+                                    <Skeleton active paragraph={{ rows: 6 }} />
                                 ) : (
                                     <PasswordForm id={user._id} />
                                 )}

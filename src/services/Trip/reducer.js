@@ -8,14 +8,38 @@ import {
 } from './actionTypes';
 import _ from 'lodash';
 
-let initialState = [];
+let initialState = {
+    isLoading: true,
+    data: [
+        {
+            _id: '',
+            locationFrom: '',
+            locationTo: '',
+            availableSeats: '',
+            fee: 10000,
+            driverID: {
+                rate: 0,
+                _id: '',
+                fullName: ''
+            }
+        }
+    ]
+};
 
 export const Trips = (state = initialState, action) => {
     switch (action.type) {
         case GET_TRIPS:
-            return action.payload;
+            return {
+                isLoading: false,
+                data: action.payload
+            };
         case CREATE_TRIP:
-            return [...state, action.payload];
+            state.data.push(action.payload);
+
+            return {
+                isLoading: false,
+                data: [...state.data]
+            };
         case SEARCH_TRIPS:
             return action.payload;
         case GET_HISTORY_TRIPS:
@@ -30,9 +54,9 @@ export const Trips = (state = initialState, action) => {
             arr[index].isFinished = action.payload.isFinished;
             arr[index].driverID.rate = action.payload.driverID.rate;
 
-        return [...arr];
+            return [...arr];
         case GET_DETAIL_TRIP:
-            console.log(action.payload)
+            console.log(action.payload);
             return action.payload;
         default:
             return state;

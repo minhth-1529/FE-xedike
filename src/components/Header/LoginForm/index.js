@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { ModalCustom } from '../styled';
 import { Button, Spin, notification } from 'antd';
 import { object, string } from 'yup';
-import { withFormik, Form as FormikForm } from 'formik';
+import { withFormik } from 'formik';
 import apiCaller from 'utils/apiCaller';
 import { connect } from 'react-redux';
 import { authLogin } from 'services/Auth/actions.js';
@@ -19,7 +19,7 @@ class LoginForm extends PureComponent {
             loginModal,
             registerModal,
             handleSubmit,
-            values
+            isSubmitting
         } = this.props;
 
         return (
@@ -29,8 +29,8 @@ class LoginForm extends PureComponent {
                 visible={signInVisible}
                 onCancel={() => loginModal(false)}
             >
-                <Spin spinning={!errors && values.spinning} tip="Loading...">
-                    <FormikForm onSubmit={handleSubmit}>
+                <Spin spinning={isSubmitting} tip="Loading...">
+                    <form onSubmit={handleSubmit}>
                         {formInput(
                             touched.email,
                             errors.email,
@@ -66,7 +66,7 @@ class LoginForm extends PureComponent {
                                 Login
                             </Button>
                         </div>
-                    </FormikForm>
+                    </form>
                 </Spin>
             </ModalCustom>
         );
@@ -77,8 +77,7 @@ const withFormikHOC = withFormik({
     mapPropsToValues() {
         return {
             email: '',
-            password: '',
-            spinning: false
+            password: ''
         };
     },
     validationSchema: object().shape({
@@ -91,12 +90,12 @@ const withFormikHOC = withFormik({
     }),
     handleSubmit: (
         values,
-        { resetForm, setFieldValue, setFieldError, props }
+        { resetForm, setFieldValue, setFieldError, props, setSubmitting }
     ) => {
         setFieldValue('spinning', true);
         apiCaller('users/login', 'POST', values)
             .then(res => {
-                setFieldValue('spinning', false);
+                setSubmitting(false);
                 axios.defaults.headers.common['token'] = res.data.token;
                 resetForm();
                 props.loginModal(false);
@@ -111,6 +110,7 @@ const withFormikHOC = withFormik({
                 });
             })
             .catch(err => {
+                setSubmitting(false);
                 setFieldError('email', err.response.data);
                 setFieldError('password', err.response.data);
             });

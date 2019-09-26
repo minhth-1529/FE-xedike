@@ -12,18 +12,20 @@ class HistoryTrips extends Component {
 
     render() {
         return (
-            <BodyWrapper className="container">
-                <Wrapper>
-                    {!_.isEmpty(this.props.historyTrips) && (
-                        <TripItem
-                            trips={this.props.historyTrips}
-                            showBtn={false}
-                            large
-                            priceFont="30px"
-                        />
-                    )}
-                </Wrapper>
-            </BodyWrapper>
+            <div className="container">
+                <BodyWrapper>
+                    <Wrapper>
+                        {!_.isEmpty(this.props.historyTrips) && (
+                            <TripItem
+                                trips={this.props.historyTrips}
+                                showBtn={false}
+                                large
+                                priceFont="30px"
+                            />
+                        )}
+                    </Wrapper>
+                </BodyWrapper>
+            </div>
         );
     }
 }

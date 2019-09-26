@@ -21,9 +21,8 @@ let initialState = {
     },
     cars: [
         {
-            _id: '',
-            carModel: 0,
-            carSeats: 0,
+            carModel: '',
+            carSeats: '',
             carName: '',
             autoMakers: '',
             carCertificate: '',

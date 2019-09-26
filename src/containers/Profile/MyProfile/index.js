@@ -19,18 +19,17 @@ class MyProfile extends PureComponent {
 
         getDetailUser(userId);
     }
-
+    // TODO lazy load
     render() {
         const { userInfo } = this.props;
         const { user, cars } = userInfo;
-
         return (
             <div className="container">
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
                             {userInfo.isLoading ? (
-                                <Skeleton avatar paragraph={{ rows: 4 }} />
+                                <Skeleton active avatar paragraph={{ rows: 4 }} />
                             ) : (
                                 <AvatarWrapper
                                     registerDate={user.registerDate}
@@ -73,59 +72,67 @@ class MyProfile extends PureComponent {
                                         {user.phoneNumber}
                                     </div>
                                 </div>
-                                {_.map(cars, (car, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <h5 className="font-weight-normal d-flex align-items-center mb-4 mt-5">
-                                                <Icon
-                                                    type="car"
-                                                    className="mr-1"
-                                                />{' '}
-                                                Car information
-                                            </h5>
-                                            <div className="form-group row">
-                                                <label className="col-sm-3">
-                                                    Carmakers:
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    {car.autoMakers}
+                                {!_.isEmpty(cars) &&
+                                    _.map(cars, (car, index) => {
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={
+                                                    _.isEmpty(cars)
+                                                        ? 'd-none'
+                                                        : ''
+                                                }
+                                            >
+                                                <h5 className="font-weight-normal d-flex align-items-center mb-4 mt-5">
+                                                    <Icon
+                                                        type="car"
+                                                        className="mr-1"
+                                                    />{' '}
+                                                    Car information
+                                                </h5>
+                                                <div className="form-group row">
+                                                    <label className="col-sm-3">
+                                                        Carmakers:
+                                                    </label>
+                                                    <div className="col-sm-9">
+                                                        {car.autoMakers}
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-sm-3">
+                                                        Car Name:
+                                                    </label>
+                                                    <div className="col-sm-9">
+                                                        {car.carName}
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-sm-3">
+                                                        Car seats:
+                                                    </label>
+                                                    <div className="col-sm-9">
+                                                        {car.carSeats}
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-sm-3">
+                                                        Car model:
+                                                    </label>
+                                                    <div className="col-sm-9">
+                                                        {car.carModel}
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-sm-3">
+                                                        Car certificate:
+                                                    </label>
+                                                    <div className="col-sm-9">
+                                                        {car.carCertificate}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="form-group row">
-                                                <label className="col-sm-3">
-                                                    Car Name:
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    {car.carName}
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-sm-3">
-                                                    Car seats:
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    {car.carSeats}
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-sm-3">
-                                                    Car model:
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    {car.carModel}
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-sm-3">
-                                                    Car certificate:
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    {car.carCertificate}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
                             </Wrapper>
                         </div>
                     </div>
