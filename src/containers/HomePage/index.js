@@ -8,11 +8,11 @@ import Trips from 'components/Trips';
 const HomePage = () => {
     return (
         <>
-            {/* <TripBooking />
+            <TripBooking />
             <Trips />
             <Introduction />
             <WhyChoose />
-            <Summary /> */}
+            <Summary />
         </>
     );
 };
