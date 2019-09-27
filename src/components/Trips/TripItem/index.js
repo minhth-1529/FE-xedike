@@ -156,7 +156,7 @@ class TripItem extends PureComponent {
                                     </Link>
                                     <Price
                                         priceFont={priceFont}
-                                        className="flex-grow-2"
+                                        className="flex-grow-1"
                                     >
                                         {item.fee && item.fee.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{' '}
                                         <sup>vnd</sup>
@@ -164,7 +164,7 @@ class TripItem extends PureComponent {
                                     <div className="flex-grow-0">
                                         {showBtn ? (
                                             <>
-                                                {userType === 'passenger' && (
+                                                {(userType !== 'driver' || userType ==='passenger') && (
                                                     <Link
                                                         to={`/booking-trip/${item._id}`}
                                                         className={`btn btn-success ${large &&

@@ -115,21 +115,12 @@ class CreateTrip extends PureComponent {
                         </div>
                         <div className="row">
                             <div className="col">
-                                <Form.Item
-                                    validateStatus={
-                                        touched.availableSeats &&
-                                        errors.availableSeats &&
-                                        'error'
-                                    }
-                                    help={
-                                        touched.availableSeats &&
-                                        errors.availableSeats
-                                    }
-                                >
+                                <Form.Item>
                                     <label className="mb-0">Slot</label>
                                     <InputNumberCustom
-                                        min={1}
+                                        min={2}
                                         defaultValue={2}
+                                        value={values.availableSeats}
                                         size="large"
                                         name="availableSeats"
                                         onChange={value =>
@@ -142,12 +133,7 @@ class CreateTrip extends PureComponent {
                                 </Form.Item>
                             </div>
                             <div className="col">
-                                <Form.Item
-                                    validateStatus={
-                                        touched.fee && errors.fee && 'error'
-                                    }
-                                    help={touched.fee && errors.fee}
-                                >
+                                <Form.Item>
                                     <label className="mb-0">Fee</label>
                                     <InputNumberCustom
                                         min={10000}
