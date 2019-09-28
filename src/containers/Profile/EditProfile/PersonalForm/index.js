@@ -188,6 +188,7 @@ class PersonalForm extends Component {
                                     Day of birth
                                 </label>
                             </div>
+                            // TODO error, need to fix
                             <div className="col-9">
                                 <FormItem
                                     validateStatus={

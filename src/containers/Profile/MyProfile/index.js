@@ -21,20 +21,25 @@ class MyProfile extends PureComponent {
     }
     // TODO lazy load
     render() {
-        const { userInfo } = this.props;
+        const { userInfo, auth } = this.props;
         const { user, cars } = userInfo;
+
         return (
             <div className="container">
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
                             {userInfo.isLoading ? (
-                                <Skeleton active avatar paragraph={{ rows: 4 }} />
+                                <Skeleton
+                                    active
+                                    avatar
+                                    paragraph={{ rows: 4 }}
+                                />
                             ) : (
                                 <AvatarWrapper
                                     registerDate={user.registerDate}
                                     fullName={user.fullName}
-                                    userType={user.userType}
+                                    userType={auth.user.userType}
                                     rate={user.rate}
                                     avatar={user.avatar}
                                 />

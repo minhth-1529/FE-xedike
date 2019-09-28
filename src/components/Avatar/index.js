@@ -98,7 +98,7 @@ class AvatarWrapper extends PureComponent {
             avatar,
             fullName,
             registerDate,
-            isMyProfile,
+            isMyProfile = false,
             userType,
             totalTrips,
             rate
@@ -113,9 +113,7 @@ class AvatarWrapper extends PureComponent {
                         <UploadAvatar isLoading={isLoading}>
                             <label className="cursor-point mb-0">
                                 <img
-                                    src={
-                                        !avatar ? AvatarImg : avatar
-                                    }
+                                    src={!avatar ? AvatarImg : avatar}
                                     alt="avatar"
                                 />
                                 <input
@@ -133,9 +131,7 @@ class AvatarWrapper extends PureComponent {
                         <UploadAvatar isLoading={isLoading}>
                             <label className="cursor-point mb-0">
                                 <img
-                                    src={
-                                        !avatar ? AvatarImg : avatar
-                                    }
+                                    src={!avatar ? AvatarImg : avatar}
                                     alt="avatar"
                                 />
                             </label>

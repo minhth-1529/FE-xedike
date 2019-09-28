@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Empty, Button, Rate } from 'antd';
+import { Empty, Button, Rate, Timeline, Icon } from 'antd';
 import _ from 'lodash';
-import { Price, Thumb } from './styled';
+import { Price, Thumb, TimelineItem } from './styled';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import swalReact from '@sweetalert/with-react';
@@ -100,15 +100,10 @@ class TripItem extends PureComponent {
                 {isEmpty ? (
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 ) : (
-                    <ul>
+                    <Timeline>
                         {_.map(trips, (item, index) => {
                             return (
-                                <li
-                                    className={
-                                        index !== 0 ? 'd-flex mt-3' : 'd-flex'
-                                    }
-                                    key={index}
-                                >
+                                <TimelineItem key={index}>
                                     <div className="flex-basic-25">
                                         <div className="d-flex align-items-center mb-1">
                                             {item.locationFrom}
@@ -123,7 +118,10 @@ class TripItem extends PureComponent {
                                         </div>
                                     </div>
                                     <div className="flex-grow-1">
-                                        <div className="mb-1">Honda</div>
+                                        <div className="mb-1 d-flex align-items-center">
+                                            <Icon type="car" className="mr-1" />
+                                            Honda
+                                        </div>
                                         <div className="d-flex align-items-center">
                                             <FaUsers className="mr-1" />
                                             {item.availableSeats}
@@ -147,7 +145,9 @@ class TripItem extends PureComponent {
                                             <div className="d-flex align-items-center">
                                                 <FaStar
                                                     className="mr-1"
-                                                    style={{ color: '#ffc107' }}
+                                                    style={{
+                                                        color: '#ffc107'
+                                                    }}
                                                 />
                                                 {item.driverID &&
                                                     item.driverID.rate}
@@ -158,13 +158,21 @@ class TripItem extends PureComponent {
                                         priceFont={priceFont}
                                         className="flex-grow-1"
                                     >
-                                        {item.fee && item.fee.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{' '}
+                                        {item.fee &&
+                                            item.fee
+                                                .toString()
+                                                .replace(
+                                                    /\B(?=(\d{3})+(?!\d))/g,
+                                                    ','
+                                                )}{' '}
                                         <sup>vnd</sup>
                                     </Price>
                                     <div className="flex-grow-0">
                                         {showBtn ? (
                                             <>
-                                                {(userType !== 'driver' || userType ==='passenger') && (
+                                                {(userType !== 'driver' ||
+                                                    userType ===
+                                                        'passenger') && (
                                                     <Link
                                                         to={`/booking-trip/${item._id}`}
                                                         className={`btn btn-success ${large &&
@@ -191,10 +199,10 @@ class TripItem extends PureComponent {
                                             </Button>
                                         )}
                                     </div>
-                                </li>
+                                </TimelineItem>
                             );
                         })}
-                    </ul>
+                    </Timeline>
                 )}
             </>
         );
