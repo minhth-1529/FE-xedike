@@ -41,12 +41,17 @@ export const Trips = (state = initialState, action) => {
                 data: [...state.data]
             };
         case SEARCH_TRIPS:
-            return action.payload;
+            return {
+                isLoading: false,
+                data: action.payload
+            };
         case GET_HISTORY_TRIPS:
-            return action.payload;
+            return {
+                isLoading: false,
+                data: action.payload
+            };
         case FINISH_TRIP:
-            let arr = [...state];
-
+            let arr = [...state.data];
             const index = _.findIndex(arr, trip => {
                 return trip._id === action.payload._id;
             });
@@ -54,9 +59,10 @@ export const Trips = (state = initialState, action) => {
             arr[index].isFinished = action.payload.isFinished;
             arr[index].driverID.rate = action.payload.driverID.rate;
 
-            return [...arr];
+            return {
+                data: [...arr]
+            };
         case GET_DETAIL_TRIP:
-            console.log(action.payload);
             return action.payload;
         default:
             return state;

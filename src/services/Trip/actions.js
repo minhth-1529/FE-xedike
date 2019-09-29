@@ -62,7 +62,7 @@ export const finishTrip = tripID => {
                     timer: 2000
                 });
             })
-            .catch(err => console.log(err.response));
+            .catch(err => console.log(err));
     };
 };
 

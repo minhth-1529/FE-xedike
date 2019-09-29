@@ -30,7 +30,7 @@ class TripItem extends PureComponent {
                 close: {
                     text: 'No thanks!',
                     className: 'ant-btn ant-btn-danger',
-                    value: 'close'
+                    value: 'noRate'
                 },
                 rate: {
                     text: 'Rate now',
@@ -38,32 +38,28 @@ class TripItem extends PureComponent {
                     className: 'ant-btn ant-btn-primary'
                 }
             }
-        })
-            .then(value => {
-                if (value === 'close') {
-                    return finishTrip(tripID);
-                }
+        }).then(value => {
+            if (value === 'noRate') {
+                return finishTrip(tripID);
+            }
 
-                return swalReact(<Rate onChange={this.handleRating} />, {
-                    buttons: {
-                        close: {
-                            text: 'Cancel',
-                            className: 'ant-btn ant-btn-danger',
-                            value: 'close'
-                        },
-                        submit: {
-                            text: 'Submit',
-                            className: 'ant-btn ant-btn-primary',
-                            value: 'submit'
-                        }
+            swalReact(<Rate onChange={this.handleRating} />, {
+                buttons: {
+                    close: {
+                        text: 'Cancel',
+                        className: 'ant-btn ant-btn-danger',
+                        value: 'close'
+                    },
+                    submit: {
+                        text: 'Submit',
+                        className: 'ant-btn ant-btn-primary',
+                        value: 'submit'
                     }
-                });
-            })
-            .then(value => {
+                }
+            }).then(value => {
                 if (value === 'close') {
                     return finishTrip(tripID);
                 }
-
                 apiCaller(`users/rating/${driverID}`, 'PUT', {
                     rate: this.state.rate
                 })
@@ -77,6 +73,7 @@ class TripItem extends PureComponent {
                     })
                     .catch(err => console.log(err.response));
             });
+        });
     };
 
     handleRating = value => {
@@ -93,6 +90,7 @@ class TripItem extends PureComponent {
             showBtn = true,
             userType
         } = this.props;
+
         const isEmpty = _.isEmpty(trips);
 
         return (

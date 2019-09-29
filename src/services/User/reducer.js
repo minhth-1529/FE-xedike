@@ -45,6 +45,7 @@ export const UserInfo = (state = initialState, action) => {
             return dataRating;
         case EDIT_PERSONAL_USER:
             let dataPersonal = { ...state };
+
             const keyArr = Object.keys(action.payload);
 
             _.forEach(keyArr, function(value) {

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Wrapper } from 'styled';
-import { Icon } from 'antd';
+import { Icon, Skeleton } from 'antd';
 import TripItem from 'components/Trips/TripItem';
 import BookingForm from 'components/TripBookingForm/BookingForm';
 import { BodyWrapper } from 'styled';
@@ -20,6 +20,7 @@ class Trips extends PureComponent {
 
     render() {
         const { trips, user } = this.props;
+        const { data, isLoading } = trips;
 
         return (
             <div className="container">
@@ -40,10 +41,12 @@ class Trips extends PureComponent {
                                     <Icon type="car" className="mr-1" />
                                     Trips
                                 </h5>
-                                <TripItem
-                                    userType={user.user.userType}
-                                    trips={trips}
-                                />
+                                <Skeleton active loading={isLoading}>
+                                    <TripItem
+                                        userType={user.user.userType}
+                                        trips={data}
+                                    />
+                                </Skeleton>
                             </Wrapper>
                         </div>
                     </div>

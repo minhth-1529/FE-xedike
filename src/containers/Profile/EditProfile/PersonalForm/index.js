@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { object, string } from 'yup';
 import { Formik, Field } from 'formik';
-import { Form, Input, Button, Icon, DatePicker } from 'antd';
+import { Form, Input, Button, Icon, DatePicker, Spin } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 import { editPersonalUser } from 'services/User/actions.js';
@@ -28,7 +28,7 @@ class PersonalForm extends Component {
                     email: email,
                     fullName: fullName,
                     phoneNumber: phoneNumber,
-                    DOB: DOB === null ? null : moment(DOB)
+                    DOB: moment(DOB, 'DD/MM/YYYY')
                 }}
                 validationSchema={object().shape({
                     email: string()
@@ -40,7 +40,8 @@ class PersonalForm extends Component {
                         .required('Phone number is required'),
                     DOB: string().required('Day of birth is required')
                 })}
-                onSubmit={(values, { setFieldError }) => {
+                onSubmit={(values, { setFieldError, setSubmitting }) => {
+                    setSubmitting(false);
                     editPersonalUser(id, values, err => {
                         _.map(Object.keys(err.response.data), field => {
                             setFieldError(field, err.response.data[field]);
@@ -52,181 +53,187 @@ class PersonalForm extends Component {
                     errors,
                     setFieldValue,
                     values,
-                    handleSubmit
+                    handleSubmit,
+                    isSubmitting
                 }) => (
-                    <form onSubmit={handleSubmit}>
-                        <div className="row">
-                            <div className="col-3 text-right">
-                                <label className="mb-0 ant-form-item-required">
-                                    E-mail
-                                </label>
-                            </div>
-                            <div className="col-9">
-                                <FormItem
-                                    validateStatus={
-                                        touched.email && errors.email && 'error'
-                                    }
-                                    help={touched.email && errors.email}
-                                >
-                                    <Field
-                                        name="email"
-                                        render={({ field }) => (
-                                            <Input
-                                                suffix={
-                                                    <Icon
-                                                        type="mail"
-                                                        style={{
-                                                            color:
-                                                                touched.email &&
-                                                                errors.email
-                                                                    ? '#f5222d'
-                                                                    : 'rgba(0,0,0,.25)'
-                                                        }}
-                                                    />
-                                                }
-                                                type="email"
-                                                size="large"
-                                                placeholder="Enter your email..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-3 text-right">
-                                <label className="mb-0 ant-form-item-required">
-                                    Full name
-                                </label>
-                            </div>
-                            <div className="col-9">
-                                <FormItem
-                                    validateStatus={
-                                        touched.fullName &&
-                                        errors.fullName &&
-                                        'error'
-                                    }
-                                    help={touched.fullName && errors.fullName}
-                                >
-                                    <Field
-                                        name="fullName"
-                                        render={({ field }) => (
-                                            <Input
-                                                suffix={
-                                                    <Icon
-                                                        type="user"
-                                                        style={{
-                                                            color:
-                                                                touched.fullName &&
-                                                                errors.fullName
-                                                                    ? '#f5222d'
-                                                                    : 'rgba(0,0,0,.25)'
-                                                        }}
-                                                    />
-                                                }
-                                                type="text"
-                                                size="large"
-                                                placeholder="Enter your name..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-3 text-right">
-                                <label className="mb-0 ant-form-item-required">
-                                    Phone number
-                                </label>
-                            </div>
-                            <div className="col-9">
-                                <FormItem
-                                    validateStatus={
-                                        touched.phoneNumber &&
-                                        errors.phoneNumber &&
-                                        'error'
-                                    }
-                                    help={
-                                        touched.phoneNumber &&
-                                        errors.phoneNumber
-                                    }
-                                >
-                                    <Field
-                                        name="phoneNumber"
-                                        render={({ field }) => (
-                                            <Input
-                                                suffix={
-                                                    <Icon
-                                                        type="phone"
-                                                        style={{
-                                                            color:
-                                                                touched.phoneNumber &&
-                                                                errors.phoneNumber
-                                                                    ? '#f5222d'
-                                                                    : 'rgba(0,0,0,.25)'
-                                                        }}
-                                                    />
-                                                }
-                                                type="text"
-                                                size="large"
-                                                placeholder="Enter your phone number..."
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </FormItem>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-3 text-right">
-                                <label className="mb-0 ant-form-item-required">
-                                    Day of birth
-                                </label>
-                            </div>
-                            // TODO error, need to fix
-                            <div className="col-9">
-                                <FormItem
-                                    validateStatus={
-                                        touched.DOB && errors.DOB && 'error'
-                                    }
-                                    help={touched.DOB && errors.DOB}
-                                >
-                                    <DatePicker
-                                        value={values.DOB}
-                                        format="DD/MM/YYYY"
-                                        size="large"
-                                        className="d-block"
-                                        name="DOB"
-                                        onChange={value =>
-                                            setFieldValue(
-                                                'DOB',
-                                                value === null
-                                                    ? undefined
-                                                    : value
-                                            )
+                    <Spin spinning={isSubmitting}>
+                        <form onSubmit={handleSubmit}>
+                            <div className="row">
+                                <div className="col-3 text-right">
+                                    <label className="mb-0 ant-form-item-required">
+                                        E-mail
+                                    </label>
+                                </div>
+                                <div className="col-9">
+                                    <FormItem
+                                        validateStatus={
+                                            touched.email &&
+                                            errors.email &&
+                                            'error'
                                         }
-                                    />
-                                </FormItem>
+                                        help={touched.email && errors.email}
+                                    >
+                                        <Field
+                                            name="email"
+                                            render={({ field }) => (
+                                                <Input
+                                                    suffix={
+                                                        <Icon
+                                                            type="mail"
+                                                            style={{
+                                                                color:
+                                                                    touched.email &&
+                                                                    errors.email
+                                                                        ? '#f5222d'
+                                                                        : 'rgba(0,0,0,.25)'
+                                                            }}
+                                                        />
+                                                    }
+                                                    type="email"
+                                                    size="large"
+                                                    placeholder="Enter your email..."
+                                                    {...field}
+                                                />
+                                            )}
+                                        />
+                                    </FormItem>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="row">
-                            <div className="col-6 offset-3">
-                                <Button
-                                    htmlType="submit"
-                                    type="primary"
-                                    size="large"
-                                >
-                                    Submit
-                                </Button>
+                            <div className="row">
+                                <div className="col-3 text-right">
+                                    <label className="mb-0 ant-form-item-required">
+                                        Full name
+                                    </label>
+                                </div>
+                                <div className="col-9">
+                                    <FormItem
+                                        validateStatus={
+                                            touched.fullName &&
+                                            errors.fullName &&
+                                            'error'
+                                        }
+                                        help={
+                                            touched.fullName && errors.fullName
+                                        }
+                                    >
+                                        <Field
+                                            name="fullName"
+                                            render={({ field }) => (
+                                                <Input
+                                                    suffix={
+                                                        <Icon
+                                                            type="user"
+                                                            style={{
+                                                                color:
+                                                                    touched.fullName &&
+                                                                    errors.fullName
+                                                                        ? '#f5222d'
+                                                                        : 'rgba(0,0,0,.25)'
+                                                            }}
+                                                        />
+                                                    }
+                                                    type="text"
+                                                    size="large"
+                                                    placeholder="Enter your name..."
+                                                    {...field}
+                                                />
+                                            )}
+                                        />
+                                    </FormItem>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+
+                            <div className="row">
+                                <div className="col-3 text-right">
+                                    <label className="mb-0 ant-form-item-required">
+                                        Phone number
+                                    </label>
+                                </div>
+                                <div className="col-9">
+                                    <FormItem
+                                        validateStatus={
+                                            touched.phoneNumber &&
+                                            errors.phoneNumber &&
+                                            'error'
+                                        }
+                                        help={
+                                            touched.phoneNumber &&
+                                            errors.phoneNumber
+                                        }
+                                    >
+                                        <Field
+                                            name="phoneNumber"
+                                            render={({ field }) => (
+                                                <Input
+                                                    suffix={
+                                                        <Icon
+                                                            type="phone"
+                                                            style={{
+                                                                color:
+                                                                    touched.phoneNumber &&
+                                                                    errors.phoneNumber
+                                                                        ? '#f5222d'
+                                                                        : 'rgba(0,0,0,.25)'
+                                                            }}
+                                                        />
+                                                    }
+                                                    type="text"
+                                                    size="large"
+                                                    placeholder="Enter your phone number..."
+                                                    {...field}
+                                                />
+                                            )}
+                                        />
+                                    </FormItem>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-3 text-right">
+                                    <label className="mb-0 ant-form-item-required">
+                                        Day of birth
+                                    </label>
+                                </div>
+                                <div className="col-9">
+                                    <FormItem
+                                        validateStatus={
+                                            touched.DOB && errors.DOB && 'error'
+                                        }
+                                        help={touched.DOB && errors.DOB}
+                                    >
+                                        <DatePicker
+                                            value={values.DOB}
+                                            format="DD/MM/YYYY"
+                                            size="large"
+                                            className="d-block"
+                                            name="DOB"
+                                            onChange={value =>
+                                                setFieldValue(
+                                                    'DOB',
+                                                    value === null
+                                                        ? undefined
+                                                        : value
+                                                )
+                                            }
+                                        />
+                                    </FormItem>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-6 offset-3">
+                                    <Button
+                                        htmlType="submit"
+                                        type="primary"
+                                        size="large"
+                                    >
+                                        Submit
+                                    </Button>
+                                </div>
+                            </div>
+                        </form>
+                    </Spin>
                 )}
             />
         );
