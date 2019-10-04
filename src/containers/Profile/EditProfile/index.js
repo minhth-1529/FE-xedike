@@ -7,6 +7,7 @@ import { Wrapper, BodyWrapper } from 'styled';
 import AvatarWrapper from 'components/Avatar';
 import { getHistoryTrips } from 'services/Trip/actions.js';
 import { getDetailUser } from 'services/User/actions.js';
+import GoBack from 'components/GoBack';
 
 class EditProfile extends PureComponent {
     updateAvatar = value => {
@@ -28,15 +29,20 @@ class EditProfile extends PureComponent {
     render() {
         const { historyTrips, userInfo } = this.props;
         const totalTrips = historyTrips.length;
-        const {user} = userInfo
+        const { user } = userInfo;
 
         return (
             <div className="container">
+                <GoBack />
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
                             {userInfo.isLoading ? (
-                                <Skeleton active avatar paragraph={{ rows: 4 }} />
+                                <Skeleton
+                                    active
+                                    avatar
+                                    paragraph={{ rows: 4 }}
+                                />
                             ) : (
                                 <AvatarWrapper
                                     registerDate={user.registerDate}

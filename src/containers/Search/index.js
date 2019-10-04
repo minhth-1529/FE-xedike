@@ -8,7 +8,7 @@ import { getTrips } from 'services/Trip/actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-
+import GoBack from 'components/GoBack';
 class Trips extends PureComponent {
     componentDidMount() {
         const { location } = this.props;
@@ -24,6 +24,7 @@ class Trips extends PureComponent {
 
         return (
             <div className="container">
+                <GoBack />
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">

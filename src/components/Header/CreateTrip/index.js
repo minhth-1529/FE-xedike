@@ -7,6 +7,7 @@ import { string, object } from 'yup';
 import { connect } from 'react-redux';
 import { getProvinces } from 'services/Province/actions.js';
 import { createTrip } from 'services/Trip/actions.js';
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -171,6 +172,12 @@ class CreateTrip extends PureComponent {
                                         format="DD/MM/YYYY"
                                         name="startTime"
                                         value={values.startTime}
+                                        disabledDate={current => {
+                                            return (
+                                                current &&
+                                                current <= moment().endOf('day')
+                                            );
+                                        }}
                                         onChange={value =>
                                             setFieldValue('startTime', value)
                                         }

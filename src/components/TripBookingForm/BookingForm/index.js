@@ -253,6 +253,12 @@ class BookingForm extends Component {
                                         format="DD/MM/YYYY"
                                         name="startTime"
                                         value={values.startTime}
+                                        disabledDate={current => {
+                                            return (
+                                                current &&
+                                                current <= moment().endOf('day')
+                                            );
+                                        }}
                                         onChange={value =>
                                             setFieldValue(
                                                 'startTime',

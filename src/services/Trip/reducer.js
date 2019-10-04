@@ -63,7 +63,10 @@ export const Trips = (state = initialState, action) => {
                 data: [...arr]
             };
         case GET_DETAIL_TRIP:
-            return action.payload;
+            return {
+                isLoading: false,
+                data: action.payload
+            };
         default:
             return state;
     }

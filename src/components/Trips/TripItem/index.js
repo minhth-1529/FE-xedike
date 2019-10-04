@@ -126,7 +126,7 @@ class TripItem extends PureComponent {
                                         </div>
                                     </div>
                                     <Link
-                                        className="flex-grow-1 d-inline-flex text-dark"
+                                        className="flex-basic-25 d-inline-flex text-dark"
                                         to={`/driver-profile/${item.driverID &&
                                             item.driverID._id}`}
                                     >

@@ -4,6 +4,7 @@ import { getHistoryTrips } from 'services/Trip/actions.js';
 import { connect } from 'react-redux';
 import { BodyWrapper, Wrapper } from 'styled';
 import { Skeleton } from 'antd';
+import GoBack from 'components/GoBack';
 
 class HistoryTrips extends Component {
     componentDidMount() {
@@ -14,6 +15,7 @@ class HistoryTrips extends Component {
         return (
             <main>
                 <div className="container">
+                    <GoBack />
                     <BodyWrapper>
                         <Wrapper>
                             <Skeleton

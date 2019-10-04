@@ -14,6 +14,8 @@ import { connect } from 'react-redux';
 import { getDetailTrip } from 'services/Trip/actions.js';
 import { getProvinces } from 'services/Province/actions.js';
 import moment from 'moment';
+import GoBack from 'components/GoBack';
+import { Skeleton } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -41,10 +43,11 @@ class BookingTrip extends Component {
             errors,
             values,
             setFieldValue,
-            trip,
             provinces,
             isSubmitting
         } = this.props;
+
+        const trip = this.props.trip.data;
 
         const locations = _.map(provinces, (item, index) => {
             return (
@@ -56,67 +59,81 @@ class BookingTrip extends Component {
 
         return (
             <div className="container">
+                <GoBack />
                 <BodyWrapper>
                     <Wrapper>
-                        <h5 className="font-weight-normal d-flex align-items-center mb-3">
-                            <Icon type="car" className="mr-1" /> Trip
-                            information
-                        </h5>
-                        <div className="d-flex">
-                            <div className="flex-grow-1">
-                                <div className="d-flex align-items-center mb-1">
-                                    {trip.locationFrom}
-                                    <Icon type="arrow-right" className="mx-2" />
-                                    {trip.locationTo}
-                                </div>
-                                <div className="d-flex align-items-center">
-                                    <Icon type="calendar" className="mr-1" />
-                                    {moment(trip.startTime).format(
-                                        'DD/MM/YYYY'
-                                    )}
-                                </div>
-                            </div>
-                            <div className="flex-grow-1">
-                                <div className="mb-1">Honda</div>
-                                <div className="d-flex align-items-center">
-                                    <Icon type="team" className="mr-1" />{' '}
-                                    {trip.availableSeats}
-                                </div>
-                            </div>
-                            <Link
-                                className="flex-grow-1 d-inline-flex text-dark"
-                                to={`/driver-profile/${trip.driverID &&
-                                    trip.driverID._id}`}
-                            >
-                                <Thumb
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSivuKfPqK-w1-eXntjE5MgV1VtoLLxZMtagarm5zVNoXBK3KpE"
-                                    alt="driver"
-                                    className="mr-2"
-                                />
-                                <div>
-                                    <p className="mb-1">
-                                        {trip.driverID &&
-                                            trip.driverID.fullName}
-                                    </p>
+                        <Skeleton
+                            loading={this.props.trip.isLoading}
+                            active
+                            paragraph={{ rows: 1 }}
+                        >
+                            <h5 className="font-weight-normal d-flex align-items-center mb-3">
+                                <Icon type="car" className="mr-1" /> Trip
+                                information
+                            </h5>
+                            <div className="d-flex">
+                                <div className="flex-grow-1">
+                                    <div className="d-flex align-items-center mb-1">
+                                        {trip.locationFrom}
+                                        <Icon
+                                            type="arrow-right"
+                                            className="mx-2"
+                                        />
+                                        {trip.locationTo}
+                                    </div>
                                     <div className="d-flex align-items-center">
                                         <Icon
-                                            type="star"
-                                            theme="twoTone"
+                                            type="calendar"
                                             className="mr-1"
-                                            twoToneColor="#ffc107"
                                         />
-                                        {trip.driverID && trip.driverID.rate}
+                                        {moment(trip.startTime).format(
+                                            'DD/MM/YYYY'
+                                        )}
                                     </div>
                                 </div>
-                            </Link>
-                            <Price priceFont="30px" className="flex-grow-1">
-                                {`${trip.fee}`.replace(
-                                    /\B(?=(\d{3})+(?!\d))/g,
-                                    ','
-                                )}{' '}
-                                <sup>vnd</sup>
-                            </Price>
-                        </div>
+                                <div className="flex-grow-1">
+                                    <div className="mb-1">Honda</div>
+                                    <div className="d-flex align-items-center">
+                                        <Icon type="team" className="mr-1" />{' '}
+                                        {trip.availableSeats}
+                                    </div>
+                                </div>
+                                <Link
+                                    className="flex-grow-1 d-inline-flex text-dark"
+                                    to={`/driver-profile/${trip.driverID &&
+                                        trip.driverID._id}`}
+                                >
+                                    <Thumb
+                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSivuKfPqK-w1-eXntjE5MgV1VtoLLxZMtagarm5zVNoXBK3KpE"
+                                        alt="driver"
+                                        className="mr-2"
+                                    />
+                                    <div>
+                                        <p className="mb-1">
+                                            {trip.driverID &&
+                                                trip.driverID.fullName}
+                                        </p>
+                                        <div className="d-flex align-items-center">
+                                            <Icon
+                                                type="star"
+                                                theme="twoTone"
+                                                className="mr-1"
+                                                twoToneColor="#ffc107"
+                                            />
+                                            {trip.driverID &&
+                                                trip.driverID.rate}
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Price priceFont="30px" className="flex-grow-1">
+                                    {`${trip.fee}`.replace(
+                                        /\B(?=(\d{3})+(?!\d))/g,
+                                        ','
+                                    )}{' '}
+                                    <sup>vnd</sup>
+                                </Price>
+                            </div>
+                        </Skeleton>
                     </Wrapper>
                     <Wrapper className="mt-5">
                         <h5 className="font-weight-normal d-flex align-items-center mb-3">
@@ -332,7 +349,7 @@ const withFormikHOC = withFormik({
                 icon: 'warning',
                 buttons: false,
                 timer: 1500
-            });
+            }).then(()=>setSubmitting(false));
         }
 
         apiCaller(`trips/booking-trip/${props.match.params.id}`, 'PUT', values)

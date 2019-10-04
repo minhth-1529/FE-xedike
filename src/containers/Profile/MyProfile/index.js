@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import AvatarWrapper from 'components/Avatar';
 import { connect } from 'react-redux';
 import { getDetailUser } from 'services/User/actions.js';
+import GoBack from 'components/GoBack';
 
 class MyProfile extends PureComponent {
     componentDidMount() {
@@ -26,6 +27,7 @@ class MyProfile extends PureComponent {
 
         return (
             <div className="container">
+                <GoBack />
                 <BodyWrapper>
                     <div className="row">
                         <div className="col-3">
