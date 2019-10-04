@@ -55,3 +55,7 @@ a:hover {
 main{
     flex-grow: 1;
 }
+
+.wp-nor{
+    white-space: nowrap;
+}

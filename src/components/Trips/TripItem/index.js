@@ -154,7 +154,7 @@ class TripItem extends PureComponent {
                                     </Link>
                                     <Price
                                         priceFont={priceFont}
-                                        className="flex-grow-1"
+                                        className="flex-basic-25"
                                     >
                                         {item.fee &&
                                             item.fee
@@ -174,7 +174,7 @@ class TripItem extends PureComponent {
                                                     <Link
                                                         to={`/booking-trip/${item._id}`}
                                                         className={`btn btn-success ${large &&
-                                                            'btn-lg'}`}
+                                                            'btn-lg wp-nor'}`}
                                                     >
                                                         Book now
                                                     </Link>
