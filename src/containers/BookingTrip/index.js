@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Wrapper } from 'styled';
 import { Price, Thumb } from 'components/Trips/TripItem/styled';
-import { Form, Input, Button, Icon, Select, Spin } from 'antd';
+import { Form, Input, Button, Icon, Select, Spin, Skeleton } from 'antd';
 import { object, string } from 'yup';
 import { withFormik, Form as FormikForm } from 'formik';
 import _ from 'lodash';
@@ -15,7 +15,6 @@ import { getDetailTrip } from 'services/Trip/actions.js';
 import { getProvinces } from 'services/Province/actions.js';
 import moment from 'moment';
 import GoBack from 'components/GoBack';
-import { Skeleton } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
