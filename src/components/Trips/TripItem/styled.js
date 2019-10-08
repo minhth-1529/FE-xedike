@@ -8,6 +8,7 @@ export const Thumb = styled.img`
 
 export const Price = styled.div`
     font-size: ${props=>props.priceFont || '15px'};
+    font-weight: ${props=>props.priceFont || 'bold'};
 `;
 
 export const TimelineItem = styled(Timeline.Item)`

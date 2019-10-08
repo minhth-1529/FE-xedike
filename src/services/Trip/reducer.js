@@ -68,6 +68,8 @@ export const Trips = (state = initialState, action) => {
                 data: action.payload
             };
         default:
-            return state;
+            return {
+                ...state
+            };
     }
 };

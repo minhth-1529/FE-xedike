@@ -90,6 +90,8 @@ class BookingForm extends Component {
                     startTime: string().required('This field is required')
                 })}
                 onSubmit={values => {
+                    this.props.isLoading(true);
+
                     const string = queryString.stringify({
                         from: values.locationFrom,
                         to: values.locationTo,

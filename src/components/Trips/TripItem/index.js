@@ -154,7 +154,7 @@ class TripItem extends PureComponent {
                                     </Link>
                                     <Price
                                         priceFont={priceFont}
-                                        className="flex-basic-25"
+                                        className="flex-basic-25 text-right"
                                     >
                                         {item.fee &&
                                             item.fee

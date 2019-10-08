@@ -3,7 +3,7 @@ import { Wrapper } from 'styled';
 import { Price, Thumb } from 'components/Trips/TripItem/styled';
 import { Form, Input, Button, Icon, Select, Spin, Skeleton } from 'antd';
 import { object, string } from 'yup';
-import { withFormik, Form as FormikForm } from 'formik';
+import { withFormik } from 'formik';
 import _ from 'lodash';
 import apiCaller from 'utils/apiCaller';
 import { InputNumberCustom } from 'components/TripBookingForm/styled';
@@ -62,7 +62,7 @@ class BookingTrip extends Component {
                 <BodyWrapper>
                     <Wrapper>
                         <Skeleton
-                            loading={this.props.trip.isLoading}
+                            loading={_.isEmpty(trip)}
                             active
                             paragraph={{ rows: 1 }}
                         >
@@ -139,7 +139,7 @@ class BookingTrip extends Component {
                             <Icon type="carry-out" className="mr-1" /> Booking
                         </h5>
                         <Spin spinning={isSubmitting} tip="Loading...">
-                            <FormikForm>
+                            <form>
                                 <div className="row">
                                     <div className="col-2 text-right">
                                         <label className="mb-0 ant-form-item-required">
@@ -319,7 +319,7 @@ class BookingTrip extends Component {
                                         </Button>
                                     </div>
                                 </div>
-                            </FormikForm>
+                            </form>
                         </Spin>
                     </Wrapper>
                 </BodyWrapper>
@@ -348,7 +348,7 @@ const withFormikHOC = withFormik({
                 icon: 'warning',
                 buttons: false,
                 timer: 1500
-            }).then(()=>setSubmitting(false));
+            }).then(() => setSubmitting(false));
         }
 
         apiCaller(`trips/booking-trip/${props.match.params.id}`, 'PUT', values)
