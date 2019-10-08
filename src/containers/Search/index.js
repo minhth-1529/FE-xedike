@@ -19,12 +19,11 @@ class Trips extends PureComponent {
     }
 
     componentDidMount() {
-        const { location, trips } = this.props;
-        const { data } = trips;
+        const { location } = this.props;
 
-        if (!_.isEmpty(location.search)) {
+        if (_.isEmpty(location.search)) {
             this.setState({
-                data: data
+                isLoading: false
             });
         }
     }
@@ -36,16 +35,24 @@ class Trips extends PureComponent {
     };
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState({
-            isLoading: nextProps.isLoading,
-            data: nextProps.trips.data,
-        });
+        const { location } = nextProps;
+console.log(nextProps);
+        if (!_.isEmpty(location.search)) {
+            this.setState({
+                data: nextProps.trips.data,
+                isLoading: nextProps.trips.isLoading
+            });
+        } else {
+            this.setState({
+                data: []
+            });
+        }
     }
 
     render() {
         const { user } = this.props;
         const { isLoading, data } = this.state;
-
+        
         return (
             <div className="container">
                 <GoBack />
