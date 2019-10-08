@@ -92,7 +92,7 @@ class TripItem extends PureComponent {
         } = this.props;
 
         const isEmpty = _.isEmpty(trips);
-
+console.log(trips)
         return (
             <>
                 {isEmpty ? (
@@ -154,7 +154,7 @@ class TripItem extends PureComponent {
                                     </Link>
                                     <Price
                                         priceFont={priceFont}
-                                        className="flex-basic-25 text-right"
+                                        className="flex-basic-25 text-center"
                                     >
                                         {item.fee &&
                                             item.fee

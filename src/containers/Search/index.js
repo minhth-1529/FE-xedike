@@ -10,6 +10,14 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import GoBack from 'components/GoBack';
 class Trips extends PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isLoading: true
+        };
+    }
+
     componentDidMount() {
         const { location } = this.props;
 
@@ -18,9 +26,22 @@ class Trips extends PureComponent {
         this.props.getTrips();
     }
 
+    isLoading = value => {
+        this.setState({
+            isLoading: value
+        });
+    };
+
+    UNSAFE_componentWillReceiveProps(nextProps){
+        this.setState({
+            isLoading: nextProps.isLoading
+        });
+    }
+
     render() {
         const { trips, user } = this.props;
-        const { data, isLoading } = trips;
+        const { data } = trips;
+        const { isLoading } = this.state;
 
         return (
             <div className="container">
@@ -33,7 +54,7 @@ class Trips extends PureComponent {
                                     <Icon type="filter" className="mr-1" />
                                     Search
                                 </h5>
-                                <BookingForm />
+                                <BookingForm isLoading={this.isLoading} />
                             </Wrapper>
                         </div>
                         <div className="col-9">
@@ -59,7 +80,7 @@ class Trips extends PureComponent {
 
 const mapStateToProps = state => {
     return {
-        trips: state.Trips,
+        trips: state.SearchTrips,
         user: state.Authenticate
     };
 };

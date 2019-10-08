@@ -1,6 +1,5 @@
 import {
     GET_TRIPS,
-    SEARCH_TRIPS,
     GET_HISTORY_TRIPS,
     GET_DETAIL_TRIP,
     CREATE_TRIP,
@@ -39,11 +38,6 @@ export const Trips = (state = initialState, action) => {
             return {
                 isLoading: false,
                 data: [...state.data]
-            };
-        case SEARCH_TRIPS:
-            return {
-                isLoading: false,
-                data: action.payload
             };
         case GET_HISTORY_TRIPS:
             return {

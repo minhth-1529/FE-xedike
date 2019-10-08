@@ -5,10 +5,8 @@ import { Formik } from 'formik';
 import { object, string } from 'yup';
 import _ from 'lodash';
 import queryString from 'query-string';
-import apiCaller from 'utils/apiCaller';
-import swal from 'sweetalert';
 import { connect } from 'react-redux';
-import { searchTrips } from 'services/Trip/actions.js';
+import { searchTrips } from 'services/SearchTrip/actions.js';
 import { getProvinces } from 'services/Province/actions.js';
 import { withRouter } from 'react-router-dom';
 
@@ -29,6 +27,10 @@ class BookingForm extends Component {
         };
     }
 
+    searchTrips = location => {
+        this.props.searchTrips(location);
+    };
+
     componentDidMount() {
         const { getProvinces } = this.props;
 
@@ -36,7 +38,7 @@ class BookingForm extends Component {
 
         if (this.props.atHome) return;
 
-        const { location, searchTrips } = this.props;
+        const { location } = this.props;
         const stringObject = queryString.parse(location.search);
 
         if (_.isEmpty(location.search)) return;
@@ -48,23 +50,11 @@ class BookingForm extends Component {
             slot: stringObject.slot
         });
 
-        apiCaller(`trips/search${location.search}`, 'POST', null)
-            .then(res => {
-                searchTrips(res.data);
-            })
-            .catch(err => {
-                swal({
-                    text: err.response.data.message,
-                    icon: 'error',
-                    buttons: false,
-                    timer: 2000
-                });
-                searchTrips([]);
-            });
+        this.searchTrips(location.search);
     }
 
     render() {
-        const { atHome, history, searchTrips } = this.props;
+        const { atHome, history } = this.props;
         const { locationFrom, locationTo, startTime, slot } = this.state;
 
         const locations = _.map(this.props.provinces, (item, index) => {
@@ -90,8 +80,6 @@ class BookingForm extends Component {
                     startTime: string().required('This field is required')
                 })}
                 onSubmit={values => {
-                    this.props.isLoading(true);
-
                     const string = queryString.stringify({
                         from: values.locationFrom,
                         to: values.locationTo,
@@ -102,19 +90,8 @@ class BookingForm extends Component {
                     history.push(`/trips/search?${string}`);
 
                     if (!atHome) {
-                        apiCaller(`trips/search?${string}`, 'POST', null)
-                            .then(res => {
-                                searchTrips(res.data);
-                            })
-                            .catch(err => {
-                                swal({
-                                    text: err.response.data.message,
-                                    icon: 'error',
-                                    buttons: false,
-                                    timer: 2000
-                                });
-                                searchTrips([]);
-                            });
+                        this.props.isLoading(true)
+                        this.searchTrips(`?${string}`);
                     }
                 }}
                 render={({

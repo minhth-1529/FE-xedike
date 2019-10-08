@@ -1,6 +1,5 @@
 import {
     GET_TRIPS,
-    SEARCH_TRIPS,
     GET_HISTORY_TRIPS,
     GET_DETAIL_TRIP,
     FINISH_TRIP,
@@ -63,13 +62,6 @@ export const finishTrip = tripID => {
                 });
             })
             .catch(err => console.log(err));
-    };
-};
-
-export const searchTrips = payload => {
-    return {
-        type: SEARCH_TRIPS,
-        payload
     };
 };
 
