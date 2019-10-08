@@ -4,7 +4,6 @@ import { Icon, Skeleton } from 'antd';
 import TripItem from 'components/Trips/TripItem';
 import BookingForm from 'components/TripBookingForm/BookingForm';
 import { BodyWrapper } from 'styled';
-import { getTrips } from 'services/Trip/actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
@@ -14,16 +13,20 @@ class Trips extends PureComponent {
         super(props);
 
         this.state = {
-            isLoading: true
+            isLoading: true,
+            data: []
         };
     }
 
     componentDidMount() {
-        const { location } = this.props;
+        const { location, trips } = this.props;
+        const { data } = trips;
 
-        if (!_.isEmpty(location.search)) return;
-
-        this.props.getTrips();
+        if (!_.isEmpty(location.search)) {
+            this.setState({
+                data: data
+            });
+        }
     }
 
     isLoading = value => {
@@ -32,16 +35,16 @@ class Trips extends PureComponent {
         });
     };
 
-    UNSAFE_componentWillReceiveProps(nextProps){
+    UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
-            isLoading: nextProps.isLoading
+            isLoading: nextProps.isLoading,
+            data: nextProps.trips.data,
         });
     }
 
     render() {
-        const { trips, user } = this.props;
-        const { data } = trips;
-        const { isLoading } = this.state;
+        const { user } = this.props;
+        const { isLoading, data } = this.state;
 
         return (
             <div className="container">
@@ -87,5 +90,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { getTrips }
+    null
 )(withRouter(Trips));

@@ -59,3 +59,7 @@ main{
 .wp-nor{
     white-space: nowrap;
 }
+
+hr{
+    border-top-color: #fff !important;
+}

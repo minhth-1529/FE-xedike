@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TripItem from 'components/Trips/TripItem';
-import { getHistoryTrips } from 'services/Trip/actions.js';
+import { getHistoryTrips } from 'services/HistoryTrip/actions.js';
 import { connect } from 'react-redux';
 import { BodyWrapper, Wrapper } from 'styled';
 import { Skeleton } from 'antd';
@@ -13,33 +13,31 @@ class HistoryTrips extends Component {
 
     render() {
         return (
-            <main>
-                <div className="container">
-                    <GoBack />
-                    <BodyWrapper>
-                        <Wrapper>
-                            <Skeleton
-                                active
-                                loading={this.props.historyTrips.isLoading}
-                            >
-                                <TripItem
-                                    trips={this.props.historyTrips.data}
-                                    showBtn={false}
-                                    large
-                                    priceFont="30px"
-                                />
-                            </Skeleton>
-                        </Wrapper>
-                    </BodyWrapper>
-                </div>
-            </main>
+            <div className="container">
+                <GoBack />
+                <BodyWrapper>
+                    <Wrapper>
+                        <Skeleton
+                            active
+                            loading={this.props.historyTrips.isLoading}
+                        >
+                            <TripItem
+                                trips={this.props.historyTrips.data}
+                                showBtn={false}
+                                large
+                                priceFont="30px"
+                            />
+                        </Skeleton>
+                    </Wrapper>
+                </BodyWrapper>
+            </div>
         );
     }
 }
 
 const mapStateToProps = state => {
     return {
-        historyTrips: state.Trips
+        historyTrips: state.HistoryTrips
     };
 };
 

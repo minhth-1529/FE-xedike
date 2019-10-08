@@ -58,7 +58,19 @@ class Header extends PureComponent {
         const { auth } = this.props;
 
         const menu = (
-            <Menu>
+            <Menu theme="dark">
+                <Menu.Item>
+                    <p
+                        style={{
+                            color: '#fff',
+                            borderBottom: '1px solid #fff',
+                            paddingBottom: '8px'
+                        }}
+                        className="mb-0"
+                    >
+                        {auth.user.fullName}
+                    </p>
+                </Menu.Item>
                 <Menu.Item>
                     <Link to="/edit-profile">Edit profile</Link>
                 </Menu.Item>

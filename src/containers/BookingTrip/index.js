@@ -3,9 +3,8 @@ import { Wrapper } from 'styled';
 import { Price, Thumb } from 'components/Trips/TripItem/styled';
 import { Form, Input, Button, Icon, Select, Spin, Skeleton } from 'antd';
 import { object, string } from 'yup';
-import { withFormik } from 'formik';
+import { withFormik, Form as FormikForm } from 'formik';
 import _ from 'lodash';
-import apiCaller from 'utils/apiCaller';
 import { InputNumberCustom } from 'components/TripBookingForm/styled';
 import { withRouter, Link } from 'react-router-dom';
 import { BodyWrapper } from 'styled';
@@ -13,6 +12,7 @@ import swal from 'sweetalert';
 import { connect } from 'react-redux';
 import { getDetailTrip } from 'services/Trip/actions.js';
 import { getProvinces } from 'services/Province/actions.js';
+import { bookingTrip } from 'services/BookingTrip/actions.js';
 import moment from 'moment';
 import GoBack from 'components/GoBack';
 
@@ -29,6 +29,9 @@ class BookingTrip extends Component {
     }
 
     componentDidMount() {
+        if (this.props.user.user.userType === 'driver') {
+            this.props.history.push('/');
+        }
         const { match, getDetailTrip, getProvinces } = this.props;
         const { id } = match.params;
 
@@ -139,7 +142,7 @@ class BookingTrip extends Component {
                             <Icon type="carry-out" className="mr-1" /> Booking
                         </h5>
                         <Spin spinning={isSubmitting} tip="Loading...">
-                            <form>
+                            <FormikForm>
                                 <div className="row">
                                     <div className="col-2 text-right">
                                         <label className="mb-0 ant-form-item-required">
@@ -319,7 +322,7 @@ class BookingTrip extends Component {
                                         </Button>
                                     </div>
                                 </div>
-                            </form>
+                            </FormikForm>
                         </Spin>
                     </Wrapper>
                 </BodyWrapper>
@@ -350,9 +353,10 @@ const withFormikHOC = withFormik({
                 timer: 1500
             }).then(() => setSubmitting(false));
         }
-
-        apiCaller(`trips/booking-trip/${props.match.params.id}`, 'PUT', values)
-            .then(() => {
+        props.bookingTrip(
+            props.match.params.id,
+            values,
+            () => {
                 setSubmitting(false);
                 swal({
                     text: 'Booking trip successfully!',
@@ -362,8 +366,8 @@ const withFormikHOC = withFormik({
                 }).then(() => {
                     props.history.push('/');
                 });
-            })
-            .catch(() => {
+            },
+            () => {
                 setSubmitting(false);
                 swal({
                     text: 'Available seat not enough',
@@ -371,7 +375,8 @@ const withFormikHOC = withFormik({
                     buttons: false,
                     timer: 1500
                 });
-            });
+            }
+        );
     }
 });
 
@@ -385,5 +390,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { getDetailTrip, getProvinces }
+    { getDetailTrip, getProvinces, bookingTrip }
 )(withRouter(withFormikHOC(BookingTrip)));

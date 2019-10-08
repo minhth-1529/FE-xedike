@@ -1,6 +1,5 @@
 import {
     GET_TRIPS,
-    GET_HISTORY_TRIPS,
     GET_DETAIL_TRIP,
     FINISH_TRIP,
     CREATE_TRIP
@@ -27,19 +26,6 @@ export const getDetailTrip = id => {
             .then(res => {
                 dispatch({
                     type: GET_DETAIL_TRIP,
-                    payload: res.data
-                });
-            })
-            .catch(err => console.log(err.response));
-    };
-};
-
-export const getHistoryTrips = () => {
-    return dispatch => {
-        return apiCaller('users/history-trips', 'GET', null)
-            .then(res => {
-                dispatch({
-                    type: GET_HISTORY_TRIPS,
                     payload: res.data
                 });
             })

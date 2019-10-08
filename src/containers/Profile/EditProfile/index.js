@@ -5,7 +5,7 @@ import PersonalForm from './PersonalForm';
 import PasswordForm from './PasswordForm';
 import { Wrapper, BodyWrapper } from 'styled';
 import AvatarWrapper from 'components/Avatar';
-import { getHistoryTrips } from 'services/Trip/actions.js';
+import { getHistoryTrips } from 'services/HistoryTrip/actions.js';
 import { getDetailUser } from 'services/User/actions.js';
 import GoBack from 'components/GoBack';
 

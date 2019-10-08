@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import { Trips } from './Trip/reducer';
 import { SearchTrips } from './SearchTrip/reducer';
+import { HistoryTrips } from './HistoryTrip/reducer';
 import { Authenticate } from './Auth/reducer';
 import { Provinces } from './Province/reducer';
+import { BookingTrips } from './BookingTrip/reducer';
 import { UserInfo } from './User/reducer';
 import { Cars } from './Car/reducer';
 
@@ -12,5 +14,7 @@ export const rootReducers = combineReducers({
     Provinces,
     UserInfo,
     Cars,
-    SearchTrips
+    SearchTrips,
+    BookingTrips,
+    HistoryTrips
 });
