@@ -10,7 +10,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { BodyWrapper } from 'styled';
 import swal from 'sweetalert';
 import { connect } from 'react-redux';
-import { getDetailTrip } from 'services/Trip/actions.js';
+import { getDetailTrip } from 'services/TripDetail/actions.js';
 import { getProvinces } from 'services/Province/actions.js';
 import { bookingTrip } from 'services/BookingTrip/actions.js';
 import moment from 'moment';

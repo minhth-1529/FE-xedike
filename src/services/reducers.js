@@ -4,6 +4,7 @@ import { SearchTrips } from './SearchTrip/reducer';
 import { HistoryTrips } from './HistoryTrip/reducer';
 import { Authenticate } from './Auth/reducer';
 import { Provinces } from './Province/reducer';
+import { TripDetail } from './TripDetail/reducer';
 import { BookingTrips } from './BookingTrip/reducer';
 import { UserInfo } from './User/reducer';
 import { Cars } from './Car/reducer';
@@ -16,5 +17,6 @@ export const rootReducers = combineReducers({
     Cars,
     SearchTrips,
     BookingTrips,
-    HistoryTrips
+    HistoryTrips,
+    TripDetail
 });

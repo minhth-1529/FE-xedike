@@ -1,9 +1,4 @@
-import {
-    GET_TRIPS,
-    GET_DETAIL_TRIP,
-    CREATE_TRIP,
-    FINISH_TRIP
-} from './actionTypes';
+import { GET_TRIPS, CREATE_TRIP, FINISH_TRIP } from './actionTypes';
 import _ from 'lodash';
 
 let initialState = {
@@ -49,11 +44,6 @@ export const Trips = (state = initialState, action) => {
 
             return {
                 data: [...arr]
-            };
-        case GET_DETAIL_TRIP:
-            return {
-                isLoading: false,
-                data: action.payload
             };
         default:
             return {

@@ -1,6 +1,5 @@
 import {
     GET_TRIPS,
-    GET_DETAIL_TRIP,
     FINISH_TRIP,
     CREATE_TRIP
 } from './actionTypes';
@@ -13,19 +12,6 @@ export const getTrips = limit => {
             .then(res => {
                 dispatch({
                     type: GET_TRIPS,
-                    payload: res.data
-                });
-            })
-            .catch(err => console.log(err.response));
-    };
-};
-
-export const getDetailTrip = id => {
-    return dispatch => {
-        return apiCaller(`trips/detail/${id}`, 'GET', null)
-            .then(res => {
-                dispatch({
-                    type: GET_DETAIL_TRIP,
                     payload: res.data
                 });
             })
