@@ -46,10 +46,11 @@ class BookingTrip extends Component {
             values,
             setFieldValue,
             provinces,
-            isSubmitting
+            isSubmitting,
+            trip
         } = this.props;
 
-        const trip = this.props.trip.data;
+        const tripData = trip.data;
 
         const locations = _.map(provinces, (item, index) => {
             return (
@@ -65,7 +66,7 @@ class BookingTrip extends Component {
                 <BodyWrapper>
                     <Wrapper>
                         <Skeleton
-                            loading={_.isEmpty(trip)}
+                            loading={trip.isLoading}
                             active
                             paragraph={{ rows: 1 }}
                         >
@@ -76,19 +77,19 @@ class BookingTrip extends Component {
                             <div className="d-flex">
                                 <div className="flex-grow-1">
                                     <div className="d-flex align-items-center mb-1">
-                                        {trip.locationFrom}
+                                        {tripData.locationFrom}
                                         <Icon
                                             type="arrow-right"
                                             className="mx-2"
                                         />
-                                        {trip.locationTo}
+                                        {tripData.locationTo}
                                     </div>
                                     <div className="d-flex align-items-center">
                                         <Icon
                                             type="calendar"
                                             className="mr-1"
                                         />
-                                        {moment(trip.startTime).format(
+                                        {moment(tripData.startTime).format(
                                             'DD/MM/YYYY'
                                         )}
                                     </div>
@@ -97,13 +98,13 @@ class BookingTrip extends Component {
                                     <div className="mb-1">Honda</div>
                                     <div className="d-flex align-items-center">
                                         <Icon type="team" className="mr-1" />{' '}
-                                        {trip.availableSeats}
+                                        {tripData.availableSeats}
                                     </div>
                                 </div>
                                 <Link
                                     className="flex-grow-1 d-inline-flex text-dark"
-                                    to={`/driver-profile/${trip.driverID &&
-                                        trip.driverID._id}`}
+                                    to={`/driver-profile/${tripData.driverID &&
+                                        tripData.driverID._id}`}
                                 >
                                     <Thumb
                                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSivuKfPqK-w1-eXntjE5MgV1VtoLLxZMtagarm5zVNoXBK3KpE"
@@ -112,8 +113,8 @@ class BookingTrip extends Component {
                                     />
                                     <div>
                                         <p className="mb-1">
-                                            {trip.driverID &&
-                                                trip.driverID.fullName}
+                                            {tripData.driverID &&
+                                                tripData.driverID.fullName}
                                         </p>
                                         <div className="d-flex align-items-center">
                                             <Icon
@@ -122,13 +123,13 @@ class BookingTrip extends Component {
                                                 className="mr-1"
                                                 twoToneColor="#ffc107"
                                             />
-                                            {trip.driverID &&
-                                                trip.driverID.rate}
+                                            {tripData.driverID &&
+                                                tripData.driverID.rate}
                                         </div>
                                     </div>
                                 </Link>
                                 <Price priceFont="30px" className="flex-grow-1">
-                                    {`${trip.fee}`.replace(
+                                    {`${tripData.fee}`.replace(
                                         /\B(?=(\d{3})+(?!\d))/g,
                                         ','
                                     )}{' '}
@@ -383,7 +384,7 @@ const withFormikHOC = withFormik({
 const mapStateToProps = state => {
     return {
         user: state.Authenticate,
-        trip: state.Trips,
+        trip: state.TripDetail,
         provinces: state.Provinces
     };
 };

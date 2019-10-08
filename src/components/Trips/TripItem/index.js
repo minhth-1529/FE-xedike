@@ -7,7 +7,7 @@ import swal from 'sweetalert';
 import swalReact from '@sweetalert/with-react';
 import apiCaller from 'utils/apiCaller';
 import { FaArrowRight, FaCalendarAlt, FaUsers, FaStar } from 'react-icons/fa';
-import { finishTrip } from 'services/Trip/actions.js';
+import { finishTrip } from 'services/HistoryTrip/actions.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
@@ -92,6 +92,8 @@ class TripItem extends PureComponent {
         } = this.props;
 
         const isEmpty = _.isEmpty(trips);
+
+        console.log(trips)
 
         return (
             <>

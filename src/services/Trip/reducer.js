@@ -1,5 +1,4 @@
-import { GET_TRIPS, CREATE_TRIP, FINISH_TRIP } from './actionTypes';
-import _ from 'lodash';
+import { GET_TRIPS, CREATE_TRIP } from './actionTypes';
 
 let initialState = {
     isLoading: true,
@@ -32,18 +31,6 @@ export const Trips = (state = initialState, action) => {
             return {
                 isLoading: false,
                 data: [...state.data]
-            };
-        case FINISH_TRIP:
-            let arr = [...state.data];
-            const index = _.findIndex(arr, trip => {
-                return trip._id === action.payload._id;
-            });
-
-            arr[index].isFinished = action.payload.isFinished;
-            arr[index].driverID.rate = action.payload.driverID.rate;
-
-            return {
-                data: [...arr]
             };
         default:
             return {

@@ -25,6 +25,7 @@ export const SearchTrips = (state = initialState, action) => {
                 isLoading: false,
                 data: action.payload
             };
+        
         default:
             return {
                 ...state
