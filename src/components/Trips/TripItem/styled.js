@@ -4,6 +4,7 @@ import { Timeline } from 'antd';
 export const Thumb = styled.img`
     width: 45px;
     height: 45px;
+    min-width: 45px;
 `;
 
 export const Price = styled.div`

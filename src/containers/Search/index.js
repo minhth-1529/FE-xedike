@@ -52,7 +52,8 @@ class SearchTrip extends PureComponent {
         if (!_.isEmpty(location.search)) {
             this.setState({
                 data: nextProps.searchTrip.data,
-                isLoading: nextProps.searchTrip.isLoading
+                isLoading: nextProps.searchTrip.isLoading,
+                currentPage: 1
             });
         } else {
             this.setState({
@@ -108,7 +109,6 @@ class SearchTrip extends PureComponent {
                                         className="text-right"
                                         size="small"
                                         defaultCurrent={currentPage}
-                                        // current={currentPage}
                                         total={totalSearch}
                                         onChange={this.changePage}
                                     />
