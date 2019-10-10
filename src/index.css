@@ -29,7 +29,7 @@ img {
     flex-grow: 2 !important;
 }
 
-.flex-basic-25{
+.flex-basic-25 {
     flex-basis: 25%;
 }
 
@@ -52,14 +52,20 @@ a:hover {
     flex-direction: column;
 }
 
-main{
+main {
     flex-grow: 1;
 }
 
-.wp-nor{
+.wp-nor {
     white-space: nowrap;
 }
 
-hr{
+hr {
     border-top-color: #fff !important;
+}
+
+.ant-pagination-item-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 }

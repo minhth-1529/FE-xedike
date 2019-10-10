@@ -2,9 +2,9 @@ import { SEARCH_TRIPS } from './actionTypes';
 import apiCaller from 'utils/apiCaller';
 import swal from 'sweetalert';
 
-export const searchTrips = location => {
+export const searchTrips = query => {
     return dispatch => {
-        return apiCaller(`trips/search${location}`, 'POST', null)
+        return apiCaller(`trips/search${query}`, 'POST', null)
             .then(res => {
                 dispatch({
                     type: SEARCH_TRIPS,

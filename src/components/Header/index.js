@@ -55,7 +55,7 @@ class Header extends PureComponent {
             addCarVisible,
             createVisible
         } = this.state;
-        const { auth,userInfo } = this.props;
+        const { auth } = this.props;
 
         const menu = (
             <Menu theme="dark">

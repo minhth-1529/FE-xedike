@@ -93,8 +93,6 @@ class TripItem extends PureComponent {
 
         const isEmpty = _.isEmpty(trips);
 
-        console.log(trips)
-
         return (
             <>
                 {isEmpty ? (

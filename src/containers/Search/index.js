@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Wrapper } from 'styled';
-import { Icon, Skeleton } from 'antd';
+import { Icon, Skeleton, Pagination } from 'antd';
 import TripItem from 'components/Trips/TripItem';
 import BookingForm from 'components/TripBookingForm/BookingForm';
 import { BodyWrapper } from 'styled';
@@ -8,18 +8,30 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import GoBack from 'components/GoBack';
-class Trips extends PureComponent {
+import { countSearchTrips } from 'services/CountSearchTrip/actions.js';
+import { searchTrips } from 'services/SearchTrip/actions.js';
+import queryString from 'query-string';
+
+class SearchTrip extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
             isLoading: true,
-            data: []
+            data: [],
+            currentPage: 1
         };
     }
 
     componentDidMount() {
-        const { location } = this.props;
+        const { location, countSearchTrips } = this.props;
+        const stringObject = queryString.parse(location.search);
+
+        this.setState({
+            currentPage: parseInt(stringObject.page) + 1
+        });
+
+        countSearchTrips(location.search);
 
         if (_.isEmpty(location.search)) {
             this.setState({
@@ -36,11 +48,11 @@ class Trips extends PureComponent {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { location } = nextProps;
-console.log(nextProps);
+
         if (!_.isEmpty(location.search)) {
             this.setState({
-                data: nextProps.trips.data,
-                isLoading: nextProps.trips.isLoading
+                data: nextProps.searchTrip.data,
+                isLoading: nextProps.searchTrip.isLoading
             });
         } else {
             this.setState({
@@ -49,10 +61,21 @@ console.log(nextProps);
         }
     }
 
+    changePage = page => {
+        const { location, history } = this.props;
+        const stringObject = queryString.parse(location.search);
+
+        stringObject.page = page - 1;
+        const string = queryString.stringify(stringObject);
+
+        history.push(`/trips/search?${string}`);
+        this.props.searchTrips(`?${string}`);
+    };
+
     render() {
-        const { user } = this.props;
-        const { isLoading, data } = this.state;
-        
+        const { user, totalSearch } = this.props;
+        const { isLoading, data, currentPage } = this.state;
+
         return (
             <div className="container">
                 <GoBack />
@@ -79,6 +102,17 @@ console.log(nextProps);
                                         trips={data}
                                     />
                                 </Skeleton>
+                                {!_.isEmpty(data) && (
+                                    <Pagination
+                                        pageSize={5}
+                                        className="text-right"
+                                        size="small"
+                                        defaultCurrent={currentPage}
+                                        // current={currentPage}
+                                        total={totalSearch}
+                                        onChange={this.changePage}
+                                    />
+                                )}
                             </Wrapper>
                         </div>
                     </div>
@@ -90,12 +124,13 @@ console.log(nextProps);
 
 const mapStateToProps = state => {
     return {
-        trips: state.SearchTrips,
-        user: state.Authenticate
+        searchTrip: state.SearchTrips,
+        user: state.Authenticate,
+        totalSearch: state.CountSearchTrip
     };
 };
 
 export default connect(
     mapStateToProps,
-    null
-)(withRouter(Trips));
+    { countSearchTrips, searchTrips }
+)(withRouter(SearchTrip));

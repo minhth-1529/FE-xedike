@@ -8,6 +8,8 @@ import { TripDetail } from './TripDetail/reducer';
 import { BookingTrips } from './BookingTrip/reducer';
 import { UserInfo } from './User/reducer';
 import { Cars } from './Car/reducer';
+import { CountTrip } from './CountTrip/reducer';
+import { CountSearchTrip } from './CountSearchTrip/reducer';
 
 export const rootReducers = combineReducers({
     Trips,
@@ -18,5 +20,7 @@ export const rootReducers = combineReducers({
     SearchTrips,
     BookingTrips,
     HistoryTrips,
-    TripDetail
+    TripDetail,
+    CountTrip,
+    CountSearchTrip
 });

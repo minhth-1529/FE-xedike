@@ -1,13 +1,10 @@
-import {
-    GET_TRIPS,
-    CREATE_TRIP
-} from './actionTypes';
+import { GET_TRIPS, CREATE_TRIP } from './actionTypes';
 import apiCaller from 'utils/apiCaller';
 import swal from 'sweetalert';
 
 export const getTrips = limit => {
     return dispatch => {
-        return apiCaller(`trips/${limit}`, 'GET', null)
+        return apiCaller(`trips/get-all/${limit}`, 'GET', null)
             .then(res => {
                 dispatch({
                     type: GET_TRIPS,

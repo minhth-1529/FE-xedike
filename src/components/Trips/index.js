@@ -4,6 +4,7 @@ import TripItem from './TripItem';
 import { Button, Skeleton } from 'antd';
 import { connect } from 'react-redux';
 import { getTrips } from 'services/Trip/actions';
+import { countTrips } from 'services/CountTrip/actions';
 
 class Trips extends PureComponent {
     constructor(props) {
@@ -16,6 +17,7 @@ class Trips extends PureComponent {
 
     componentDidMount() {
         this.props.getTrips(this.state.limit);
+        this.props.countTrips();
     }
 
     loadMore = () => {
@@ -32,26 +34,23 @@ class Trips extends PureComponent {
     };
 
     render() {
-        const { user, trips } = this.props;
-        const length = trips.length;
+        const { user, trips, totalTrips } = this.props;
         const { limit } = this.state;
         const { data, isLoading } = trips;
 
         return (
             <Section>
                 <h2 className="text-center mb-5">Trip Recent</h2>
-                {isLoading ? (
-                    <Skeleton active />
-                ) : (
+                <Skeleton active loading={isLoading}>
                     <TripItem
                         userType={user.user.userType}
                         trips={data}
                         large
                         priceFont="30px"
                     />
-                )}
-                {limit === length && (
-                    <div className="text-center mt-5">
+                </Skeleton>
+                {limit < totalTrips && (
+                    <div className="text-center mt-3">
                         <Button
                             onClick={this.loadMore}
                             type="dashed"
@@ -69,11 +68,12 @@ class Trips extends PureComponent {
 const mapStateToProps = state => {
     return {
         user: state.Authenticate,
-        trips: state.Trips
+        trips: state.Trips,
+        totalTrips: state.CountTrip
     };
 };
 
 export default connect(
     mapStateToProps,
-    { getTrips }
+    { getTrips, countTrips }
 )(Trips);

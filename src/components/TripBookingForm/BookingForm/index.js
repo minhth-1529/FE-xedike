@@ -32,9 +32,7 @@ class BookingForm extends Component {
     };
 
     componentDidMount() {
-        const { getProvinces } = this.props;
-
-        getProvinces();
+        this.props.getProvinces();
 
         if (this.props.atHome) return;
 
@@ -47,7 +45,8 @@ class BookingForm extends Component {
             locationFrom: stringObject.from,
             locationTo: stringObject.to,
             startTime: moment(stringObject.startTime),
-            slot: stringObject.slot
+            slot: stringObject.slot,
+            page: 0
         });
 
         this.searchTrips(location.search);
@@ -84,13 +83,14 @@ class BookingForm extends Component {
                         from: values.locationFrom,
                         to: values.locationTo,
                         startTime: values.startTime,
-                        slot: values.slot
+                        slot: values.slot,
+                        page: 0
                     });
 
                     history.push(`/trips/search?${string}`);
 
                     if (!atHome) {
-                        this.props.isLoading(true)
+                        this.props.isLoading(true);
                         this.searchTrips(`?${string}`);
                     }
                 }}

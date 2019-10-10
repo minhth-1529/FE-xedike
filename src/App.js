@@ -4,7 +4,7 @@ import MyProfile from './containers/Profile/MyProfile';
 import HomePage from './containers/HomePage';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Search from './containers/Search';
+import SearchTrip from './containers/Search';
 import BookingTrip from './containers/BookingTrip';
 import HistoryTrips from './containers/HistoryTrip';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -32,7 +32,7 @@ const App = props => {
                     <Header />
                     <Switch>
                         <Route path="/" exact component={HomePage} />
-                        <Route path="/trips/search" component={Search} />
+                        <Route path="/trips/search" component={SearchTrip} />
                         <Route
                             path="/booking-trip/:id"
                             component={BookingTrip}
