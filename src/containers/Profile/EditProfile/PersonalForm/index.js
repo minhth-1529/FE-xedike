@@ -41,12 +41,18 @@ class PersonalForm extends Component {
                     DOB: string().required('Day of birth is required')
                 })}
                 onSubmit={(values, { setFieldError, setSubmitting }) => {
-                    setSubmitting(false);
-                    editPersonalUser(id, values, err => {
-                        _.map(Object.keys(err.response.data), field => {
-                            setFieldError(field, err.response.data[field]);
-                        });
-                    });
+                    editPersonalUser(
+                        id,
+                        values,
+                        () => {
+                            setSubmitting(false);
+                        },
+                        err => {
+                            _.map(Object.keys(err.response.data), field => {
+                                setFieldError(field, err.response.data[field]);
+                            });
+                        }
+                    );
                 }}
                 render={({
                     touched,
@@ -99,7 +105,6 @@ class PersonalForm extends Component {
                                     </FormItem>
                                 </div>
                             </div>
-
                             <div className="row">
                                 <div className="col-3 text-right">
                                     <label className="mb-0 ant-form-item-required">
@@ -228,7 +233,7 @@ class PersonalForm extends Component {
                                         type="primary"
                                         size="large"
                                     >
-                                        Submit
+                                        Update
                                     </Button>
                                 </div>
                             </div>

@@ -28,7 +28,7 @@ class EditProfile extends PureComponent {
 
     render() {
         const { historyTrips, userInfo } = this.props;
-        const totalTrips = historyTrips.length;
+        const totalTrips = historyTrips.data.length;
         const { user } = userInfo;
 
         return (
@@ -63,9 +63,11 @@ class EditProfile extends PureComponent {
                                     <Icon type="user" className="mr-1" />
                                     Personal information
                                 </h5>
-                                {userInfo.isLoading ? (
-                                    <Skeleton active paragraph={{ rows: 6 }} />
-                                ) : (
+                                <Skeleton
+                                    loading={userInfo.isLoading}
+                                    active
+                                    paragraph={{ rows: 6 }}
+                                >
                                     <PersonalForm
                                         email={user.email}
                                         fullName={user.fullName}
@@ -74,16 +76,18 @@ class EditProfile extends PureComponent {
                                         id={user._id}
                                         isLoading={userInfo.isLoading}
                                     />
-                                )}
+                                </Skeleton>
                                 <h5 className="font-weight-normal d-flex align-items-center mb-4 mt-5">
                                     <Icon type="lock" className="mr-1" /> Change
                                     password
                                 </h5>
-                                {userInfo.isLoading ? (
-                                    <Skeleton active paragraph={{ rows: 6 }} />
-                                ) : (
+                                <Skeleton
+                                    loading={userInfo.isLoading}
+                                    active
+                                    paragraph={{ rows: 6 }}
+                                >
                                     <PasswordForm id={user._id} />
-                                )}
+                                </Skeleton>
                             </Wrapper>
                         </div>
                     </div>
@@ -96,7 +100,7 @@ class EditProfile extends PureComponent {
 const mapStateToProps = state => {
     return {
         auth: state.Authenticate,
-        historyTrips: state.Trips,
+        historyTrips: state.HistoryTrips,
         userInfo: state.UserInfo
     };
 };

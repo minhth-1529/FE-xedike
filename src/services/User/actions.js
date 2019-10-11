@@ -49,7 +49,12 @@ export const ratingDriver = (id, data) => {
     };
 };
 
-export const editPersonalUser = (userID, value, callback) => {
+export const editPersonalUser = (
+    userID,
+    value,
+    callbackThen,
+    callbackCatch
+) => {
     return dispatch => {
         return apiCaller(`users/personal/${userID}`, 'PUT', value)
             .then(res => {
@@ -63,9 +68,10 @@ export const editPersonalUser = (userID, value, callback) => {
                     buttons: false,
                     timer: 1500
                 });
+                callbackThen();
             })
             .catch(err => {
-                callback(err);
+                callbackCatch(err);
             });
     };
 };
@@ -87,7 +93,7 @@ export const updateAvatar = (userID, value, config, callback) => {
                 callback();
             })
             .catch(err => {
-                console.log(err.response)
+                console.log(err.response);
             });
     };
 };
